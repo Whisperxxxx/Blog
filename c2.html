@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>值类型和引用类型</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="coreconcept.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>值类型和引用类型</h1>
+        <h2>C#中的值类型</h2>
+        <p>
+            值类型包括：基本数据类型，结构体(Structs)，枚举(Enums)
+        </p>
+        <p>
+            <bold>基本数据类型</bold>
+            <br>如int, double, bool等
+        </p>
+        <p>
+            <bold> 结构体(Structs)</bold>
+            <br> 结构体可以包含字段、方法、属性、索引器、操作符方法和事件。但是，与类不同的是，结构体默认是按值传递的，而且不能继承于另一个类或结构体。
+            <pre><code>
+            struct Point
+            {
+                public int X;
+                public int Y;
+            
+                public Point(int x, int y)
+                {
+                    X = x;
+                    Y = y;
+                }
+            
+                public double DistanceTo(Point other)
+                {
+                    int dx = X - other.X;
+                    int dy = Y - other.Y;
+                    return Math.Sqrt(dx * dx + dy * dy);
+                }
+            }
+
+            Point p1 = new Point(0, 0);
+            Point p2 = new Point(10, 10);
+            double distance = p1.DistanceTo(p2);
+            Console.WriteLine($"Distance: {distance}");
+            </code></pre>
+            <br>在上述代码中，Point 结构体包含了两个整型字段 X 和 Y，一个构造函数和一个方法 DistanceTo 来计算当前点到另一个点的距离。
+        </p>
+        <p>
+            <bold>枚举(Enums)</bold>
+            <br>枚举是一种特殊的值类型，用来定义一组命名的常数。枚举必须是整数类型，但不限于int,你可以将枚举的基础类型指定为任何整型数（如 byte, sbyte, short, ushort, int, uint, long, 或 ulong）
+            <pre><code>
+                enum DayOfWeek
+                {
+                    Sunday,
+                    Monday,
+                    Tuesday,
+                    Wednesday,
+                    Thursday,
+                    Friday,
+                    Saturday
+                }
+                
+                DayOfWeek today = DayOfWeek.Wednesday;
+                Console.WriteLine($"Today is {today}");
+            </code></pre>
+            <br>在上述代码中，DayOfWeek 枚举包括一周内的七天。默认情况下，枚举的基类型是 int，并且第一个枚举成员的值为 0，之后每个成员的值依次递增。
+            所以Sunday 的默认整数值是 0，Monday 的默认整数值是 1，以此类推，Wednesday 的默认整数值是 3。在这里，结果输出为"Today is Wednesday",
+            之所以输出是Wednesday而不是3,是因为当你使用枚举值与字符串一起打印时，默认情况下输出的是枚举成员的名称，而不是它的整数值。如果代码是Console.WriteLine($"Today is {(int)today}");则输出为"Today is 3"
+        </p>
+        <h2>C#中的引用类型</h2>
+        <p>引用类型包括：类(Classes)，接口(Interfaces)，委托(Delegates)，数组</p>
+        <p>
+            <bold>接口(interfaces)</bold>
+            <br>接口定义了一个类必须实现的方法和属性，但它们不提供实现。接口是定义功能而不实现的方式，可以看作是一种约定，用来实现多态和解耦。
+            <pre><code>
+                public interface IAnimal
+                {
+                    void Eat();
+                }
+                
+                public class Dog : IAnimal
+                {
+                    public void Eat()
+                    {
+                        Console.WriteLine("Dog is eating.");
+                    }
+                }
+                
+                public class Cat : IAnimal
+                {
+                    public void Eat()
+                    {
+                        Console.WriteLine("Cat is eating.");
+                    }
+                }
+                
+                public void FeedAnimal(IAnimal animal)
+                {
+                    animal.Eat();
+                }
+
+                Dog myDog = new Dog();
+                Cat myCat = new Cat();
+        
+                FeedAnimal(myDog);
+                FeedAnimal(myCat);
+            </code></pre>
+            <br>上述代码结果为Dog is eating. Cat is eating.
+        </p>
+        <p>
+            <bold>委托(Delegates)</bold>
+            <br>委托是一个类型安全的函数指针，允许将方法作为参数传递，是实现事件和回调方法的基础。这就像是你有一个遥控器（委托），可以用它来控制不同的电器（方法）。
+            <pre><code>
+                public delegate void PrintMessageDelegate(string message); // 定义委托
+                // 创建一个具有相同签名的方法
+                public void PrintMessage(string message)
+                {
+                    Console.WriteLine(message);
+                }
+
+                // 创建委托实例，并将其关联到 PrintMessage 方法
+                PrintMessageDelegate myDelegate = new PrintMessageDelegate(PrintMessage);
+
+                // 使用委托调用方法
+                myDelegate("Hello, world!");
+            </code></pre>
+        </p>
+        <h2>值类型和引用类型的区别</h2>
+        <p>值类型的变量直接存储其数据。这些类型的数据存储在栈上。这就意味着当你将一个值类型的变量赋值给另一个变量时，其值会被复制。因此，如果你修改一个变量，不会影响另一个变量。
+        <br>引用类型的变量存储的不是实际的数据，而是数据的引用（或地址）。这意味着引用类型的数据是存储在堆上的，引用存储在栈上。当你将一个引用类型的变量赋值给另一个变量时，两个变量将指向内存中的同一位置。因此，如果一个变量的数据被改变了，另一个变量所引用的数据也会跟着改变。
+        </p>
+        <p>
+            <bold>栈(Stack)</bold>
+            <br>栈是一种运行时数据结构，用于存储局部变量和方法调用的执行上下文。栈遵循“后进先出”（LIFO，Last In First Out）的原则，这意味着最后被放入栈的项最先被取出。栈的特点和用途包括：
+            <br>1. 快速访问：栈允许快速的数据访问，因为它总是在顶部添加或移除元素
+            <br>2. 大小限制：栈有固定的大小限制。
+            <br>3. 局部变量存储：栈用于存储函数或方法的局部变量。
+            <br>4. 自动管理：当一个方法执行完成后，它的栈帧会自动从栈中被移除。
+        </p>
+        <p>
+            <bold>堆(Heap)</bold>
+            <br>堆是另一种用于存储数据的内存区域，主要用于存放动态分配的内存，即程序运行时分配的内存。堆的特点和用途包括：
+            <br>1. 动态内存分配：在堆上，内存的分配和释放是动态进行的。
+            <br>2. 内存容量大：与栈相比，堆通常拥有更大的内存空间。
+            <br>3. 引用类型存储：C#中的引用类型都是在堆上分配的。
+            <br>4. 管理复杂性：堆通过垃圾回收器（Garbage Collector, GC）来处理不再使用的内存。这种管理可能导致性能开销。
+        </p>
+
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>
