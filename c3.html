@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>继承 封装 多态 抽象</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="coreconcept.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>拆装箱</h1>
+        <p>在 C# 中，拆箱（unboxing）和装箱（boxing）是两个重要的概念，它们描述了值类型（如 int、double 等）与引用类型（如 object）之间的转换过程。</p>
+        <h2>装箱(Boxing)</h2>
+        <p>
+            装箱 是将值类型转换为引用类型（通常是 object 类型）的过程。装箱是隐式的。步骤为：
+        <br><bold>1.分配内存：</bold>在堆上分配内存来存储特定的值类型。
+        <br><bold>2.复制数据：</bold>然后将值类型的数据复制到堆上分配的内存中。
+        <br><bold>3.转换为引用：</bold>返回一个指向这块内存的引用。
+
+        <br><bold>示例代码</bold>
+        <pre><code>
+            int num = 123;
+            object obj = num;  // 装箱发生在这里
+        </code></pre>
+        在这个例子中，int 是一个值类型，而 obj 是一个引用类型。把 num 赋给 obj 时，num 的值被复制到堆上新分配的内存中。
+        </p>
+
+        <h2>拆箱(Unboxing)</h2>
+        <p>
+            拆箱 是将引用类型（已装箱的值类型）转换回原始的值类型的过程。拆箱操作需要显式转换，因为它涉及到类型安全问题，拆箱到错误的类型会在运行
+            时引发异常。步骤为：
+        <br><bold>1.检查类型：</bold>首先验证引用实际上指向的是正确的值类型
+        <br><bold>2.复制数据：</bold>然后从引用类型中复制数据回到一个新的值类型变量中。
+        <br><bold>示例代码</bold>
+        <pre><code>
+            object obj = 123;  // 装箱
+            int num = (int)obj;  // 拆箱发生在这里            
+        </code></pre>
+        在这个例子中，先将 int 装箱成 object 类型，然后再通过显式转换将其拆箱回 int 类型。
+        </p>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>

@@ -33,11 +33,11 @@
         <table border="1">
             <thead>
                 <tr>
-                    <th>类型及说明访问修饰符</th>
+                    <th>访问修饰符</th>
                     <th>同一个类</th>
-                    <th>同一个包</th>
-                    <th>不同包，子类</th>
-                    <th>不同包，非子类</th>
+                    <th>同一个程序集</th>
+                    <th>不同程序集，子类</th>
+                    <th>不同程序集，非子类</th>
                 </tr>
             </thead>
             <tbody>
@@ -51,6 +51,20 @@
                 <tr>
                     <td>protected</td>
                     <td>✔️</td>
+                    <td></td>
+                    <td>✔️</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>internal</td>
+                    <td>✔️</td>
+                    <td>✔️</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>protected internal</td>
+                    <td>✔️</td>
                     <td>✔️</td>
                     <td>✔️</td>
                     <td></td>
@@ -62,15 +76,9 @@
                     <td>✔️</td>
                     <td>✔️</td>
                 </tr>
-                <tr>
-                    <td>默认（无修饰符）</td>
-                    <td>✔️</td>
-                    <td>✔️</td>
-                    <td></td>
-                    <td></td>
-                </tr>
             </tbody>
         </table>
+        
         <h2>继承：</h2>
         <p>继承主要实现重用代码，节省开发时间。继承是指可以让某个类型的对象获得另一个类型的对象的属性的方法。它可以使用现有类的
             所有功能，并在无需重新编写原来的类的情况下对这些功能进行扩展。 通过继承创建的新类称为“子类”或“派生类”，被继承的类称
