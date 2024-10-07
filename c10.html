@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>垃圾回收机制</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="coreconcept.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>垃圾回收机制</h1>
+        <h2>垃圾回收的工作原理</h2>
+        <bold>1.标记：</bold>
+        <ul>
+            <li>圾回收器开始工作时，首先会暂停程序执行（称为“停止世界”），然后检查所有对象的引用。</li>
+            <li>它会从根对象（如静态字段、局部变量等）开始，递归地标记所有可访问的对象。</li>
+        </ul>
+        <bold>2.清除：</bold>
+        <ul>
+            <li>在标记过程完成后，垃圾回收器会清理掉所有未被标记的对象，因为这些对象已经不再被应用程序访问。</li>
+            <li>清理过程会释放未标记对象占用的内存空间。</li>
+        </ul>
+        <bold>3.压缩（可选）：</bold>
+        <ul>
+            <li>清理未被标记的对象后，垃圾回收器可能会进行内存压缩。</li>
+            <li>压缩过程将存活的对象向内存的一端移动，从而减少内存碎片，为新的对象分配提供连续的空间。</li>
+        </ul>
+        <h2>垃圾回收的生成</h2>
+        <p>.NET 的垃圾回收机制使用了分代收集的概念</p>
+        <ul>
+            <li><bold>第0代：</bold>新分配的对象都会放在第 0 代。这一代的垃圾回收最频繁，因为大多数对象所占用的内存时间都很短。</li>
+            <li><bold>第2代：</bold>从第 0 代存活下来的对象会被移到第 1 代。这一代的对象比第 0 代的生命周期长，因此回收频率较低。</li>
+            <li><bold>第3代：</bold>从第 1 代存活下来的对象会被移到第 2 代。这里通常包括应用程序的生命周期内一直存活的对象，回收频率最低。</li>
+        </ul>
+        <h2>如何优化垃圾回收?</h2>
+        <ul>
+            <li><bold>对象池：</bold>使用对象池来重用常见的对象，如子弹。</li>
+            <li><bold>减少临时对象创建：</bold>避免在频繁调用的方法（如 Update 或 FixedUpdate）中创建临时对象。</li>
+            <li><bold>结构体和类的选择：</bold>尽可能使用结构体而不是类，因为结构体可以减少堆上的分配。</li>
+        </ul>
+        <h2>监控和诊断工具</h2>
+        <ul>
+            <li><bold>Profiler：</bold>使用 Unity Profiler 来监控内存分配和垃圾回收活动。</li>
+        </ul>
+
+
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>

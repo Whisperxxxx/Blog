@@ -24,12 +24,6 @@
                 <bold>目的</bold>
                 <br>确保一个类只有一个实例，并提供一个全局访问点来获取这个实例。
                 <p>
-                    <bold>特点</bold>
-                    <br>1. <bold>单一实例：</bold>确保只创建一个实例。
-                    <br>2. <bold>全局访问：</bold>提供一个全局访问点，整个应用程序可以通过这一点访问该实例。
-                    <br>3. <bold>自我管理：</bold>单例类通常自己负责管理它的创建和生命周期。
-                </p>
-                <p>
                     <bold>使用场景</bold>
                     <br>当需要全局访问一个共享资源或服务，如配置服务、日志服务等。
                     <br>当需要频繁创建和销毁实例时。
@@ -183,6 +177,116 @@
                         }                             
                     </code></pre>
                 </p>
+            </p>
+            <h2>行为型模式：观察者模式（Observer Pattern）</h2>
+            <p>
+                <bold>目的</bold>
+                <br>定义对象间的一种一对多的依赖关系，使得每当一个对象改变状态，则所有依赖于它的对象都会得到通知并被自动更新。
+                <p>
+                    <bold>使用场景</bold>
+                    <br>当一个对象的状态变化需要同时更新其他对象时
+                </p>
+                <p>
+                    <bold>优点</bold>
+                    <br>1. 解耦: 观察者与主题之间的耦合度低
+                    <br>2. 建立了一套状态改变时的触发和通知机制。
+                </p>
+                <p>
+                    <bold>缺点</bold>
+                    <br>1. 性能问题：如果观察者众多，通知过程可能耗时。
+                    <br>2. 缺乏变化详情：观察者不知道主题如何变化，只知道变化发生。
+                </p>
+                <p>
+                    <bold>观察者模式实现</bold>
+                    <br>定义观察者接口，它规定了所有观察者必须实现的 Update 方法
+                    <pre><code>
+                        public interface IObserver
+                        {
+                            void Update(string message);
+                        }                             
+                    </code></pre>
+                    <br>定义主题接口，它包含注册和移除观察者的方法，以及通知所有观察者的方法
+                    <pre><code>
+                        public interface ISubject
+                        {
+                            void Attach(IObserver observer);
+                            void Detach(IObserver observer);
+                            void Notify();
+                        }                                                  
+                    </code></pre>   
+                    <br>实现具体主题，具体主题实现了主题接口
+                    <pre><code>
+                        public class ConcreteSubject : ISubject
+                        {
+                            private List<IObserver> _observers = new List<IObserver>();
+                            private string _state;
+                        
+                            public void Attach(IObserver observer)
+                            {
+                                _observers.Add(observer);
+                            }
+                        
+                            public void Detach(IObserver observer)
+                            {
+                                _observers.Remove(observer);
+                            }
+                        
+                            public void Notify()
+                            {
+                                foreach (IObserver observer in _observers)
+                                {
+                                    observer.Update(_state);
+                                }
+                            }
+                        
+                            public void SetState(string state)
+                            {
+                                _state = state;
+                                Notify();
+                            }
+                        }                                                                       
+                    </code></pre>  
+                    <br>实现具体观察者, 定义了在接收到状态更新通知时的具体行为
+                    <pre><code>
+                        public class ConcreteObserver : IObserver
+                        {
+                            private string _name;
+                        
+                            public ConcreteObserver(string name)
+                            {
+                                _name = name;
+                            }
+                        
+                            public void Update(string message)
+                            {
+                                Console.WriteLine($"{_name} received update: {message}");
+                            }
+                        }
+                    </code></pre>   
+                    <br>使用观察者模式
+                    <pre><code>
+                        class Program
+                        {
+                            static void Main(string[] args)
+                            {
+                                ConcreteSubject subject = new ConcreteSubject();
+                        
+                                IObserver observer1 = new ConcreteObserver("Observer 1");
+                                IObserver observer2 = new ConcreteObserver("Observer 2");
+                                IObserver observer3 = new ConcreteObserver("Observer 3");
+                        
+                                subject.Attach(observer1);
+                                subject.Attach(observer2);
+                                subject.Attach(observer3);
+                        
+                                subject.SetState("New State 1"); // 所有观察者会收到更新
+                                subject.Detach(observer2);
+                                subject.SetState("New State 2"); // 只有Observer 1 和 3 会收到更新
+                            }
+                        }                        
+                    </code></pre>   
+                </p>
+    
             </p>
         </p>
     </main>

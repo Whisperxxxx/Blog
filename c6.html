@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>渲染管线流程</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="coreconcept.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>渲染管线流程</h1>
+        <h2>1. 应用层</h2>
+        <p>
+            C程序在CPU上运行，模拟相机和场景中的对象，一但模拟完成，应用程序会将顶点数据从CPU传输到GPU。
+        </p>
+        <h2>2. 顶点处理</h2>
+        <p>
+            <h3>2.1. 顶点着色器（Vertex Shader）阶段</h3>
+            <br><img src="Vertex Shader.png">
+            <p>顶点着色器阶段负责将顶点从模型空间（Model Space）转换到最终用于光栅化的裁剪空间（Clip Space）。这个过程通常分为三个主要步骤：</p>
+            <ul>
+                <li><h4>模型矩阵（Model Matrix）</h4></li>
+                将顶点从模型空间（Model Space）转换到世界空间（World Space）。模型空间是对象自身的局部坐标系，世界空间则是场景的全局坐标系。
+                <li><h4>视图矩阵（View Matrix）</h4></li>
+                将顶点从世界空间转换到视图空间（View Space），也称为摄像机空间。此转换以摄像机为中心，将场景中的对象映射到一个以摄像机为基准的坐标系统。
+            
+                <li><h4>投影矩阵（Projection Matrix）</h4></li>
+                将顶点从视图空间转换到裁剪空间（Clip Space）。投影矩阵可以是透视投影或正交投影，负责将三维场景投影到二维平面。
+            </ul>
+            <p>最终结果是，顶点从三维的模型空间通过一系列变换被映射到屏幕的二维空间。</p>
+        </p>
+        <p>
+            <h3>2.2 顶点后处理（Vertex Post-Processing）阶段</h3>
+            <bold>图元装配（Primitive Assembly）：</bold>将顶点按照预定义的几何形状（如三角形、线段等）组装成图元。
+            <br><img src="Triangle Assembly.png" width="700" height="300">
+            <br><bold>剪裁（Clipping）：</bold>在视景体之外的图元会被剪裁掉。这一步确保只处理那些可见的部分，从而提升效率。
+            <br><img src="Clipping.png" width="700" height="300">
+            <br><bold>透视除法（Perspective Divide）：</bold>在使用透视投影时，需要对每个顶点的坐标进行除法运算，确保其符合视景体的透视效果。通过这一操作，顶点坐标会被转换成规范化设备坐标（NDC）。
+            <br><img src="Perspective Divide.png" width="700" height="300">
+            <br><bold>视口变换（Viewport Transformation）</bold>将3D对象经过投影变换后所产生的规范化设备坐标映射到视口范围内的屏幕坐标系
+            <br><img src="Viewport Transformation.png" width="700" height="300">
+        </p>
+        <h2>3. 光栅化（Rasterization）阶段</h2>
+        <p>
+            在光栅化阶段，图元（如三角形）会被转换为屏幕上的像素或片元。光栅化将二维空间中的几何图元映射到屏幕坐标，生成片元，这些片元对应屏幕上的像素点。
+            <br><img src="Rasterisation.png" width="700" height="300">
+        </p>
+        <h2>4. 像素处理（Pixel Processing）阶段</h2>
+        <h3>4.1片元着色器（Fragment Shader）</h3>
+        <p>
+            片元着色器是处理每个像素的着色计算的阶段。在这个阶段，片元的颜色、纹理坐标和深度值等会根据场景中的光照和材质信息来进行计算。
+            <br><img src="Fragment Shader.png" width="700" height="300">
+        </p>
+        <h3>4.2合并（Merging）</h3>
+        <p>
+            合并阶段发生在片元着色器之后，是渲染管线的最后一步。在这个阶段，已经处理过的片元会和现有的帧缓冲数据进行合并，这包括深度测试（Depth Test）、颜色缓冲区（Color Buffer）以及混合（Blending）等。
+            合并的目的是确保正确的片元被绘制到屏幕上，较近的物体会覆盖较远的物体，透明物体会和背景颜色进行混合。
+            <br><img src="Merging.png" width="700" height="300">
+        </p>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>

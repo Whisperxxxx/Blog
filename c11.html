@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>virtual和override</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="coreconcept.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>virtual和override</h1>
+        <h2>virtual和non-virtual的区别</h2>
+        <ul>
+            <li>1.带有virtual的方法可以被重写，这意味着其子类可以提供自己特定的实现逻辑，而non-virtual则不可以被重写</li>
+            <li>2.带有virtual的方法是动态绑定，virtual函数是在运行的时候来确定具体调用哪个类。而non-virtual方法的调用在编译时就已确定，称为静态绑定</li>
+        </ul>
+        <h2>检查流程</h2>
+        <p>从C#的程序编译角度来看，一般函数在编译时就静态地编译到了执行文件中，其相对地址在运行期间是不发生变化的，而虚拟函数在编译时不是静态编译的，其相对地址是不确定的，
+            它会根据运行时期对象实例来动态判断要调用的函数，其中那个申明时定义的类叫申明类，那个执行时实例化的类叫实例类。
+            <br>如如：鸟类 bird = new 麻雀();
+            <br>那么鸟类就是申明类，麻雀是实例类。
+            <br>具体流程为：
+            <br>1.当调用一个对象的函数时，系统会直接去检查这个对象申明定义的类，即申明类，看所调用的函数是否为虚函数；
+            <br>2.如果不是虚函数，则直接执行该函数。如果是，则转去检查该对象的实例类
+            <br>3.在实例中，首先检查是否被重写（override关键字），如果有，执行该重写函数。如果没有，则会逐个往上找父类，并对父类重复上述实例类检查，直到找到第一个重载了该虚函数的父类为止，然后执行该父类里重载后的函数。
+        </p>
+        <pre><code>
+            class A  
+            {  
+                public virtual void Func() 
+                {  
+                    Console.WriteLine("Func In A");  
+                }  
+
+                public void Non_virtual()  
+                {  
+                    Console.WriteLine("Non virtual func in A");  
+                }  
+            }  
+            class B : A // B从A继承
+            {  
+                public override void Func() // 注意override ,表明重新实现了虚函数  
+                {  
+                    Console.WriteLine("Func In B");  
+                }  
+
+                public void Non_virtual()  
+                {  
+                    Console.WriteLine("Non virtual func in B");  
+                }  
+            }  
+
+            class C : B // C是从B类继承
+            {  
+                public void Non_virtual()  
+                {  
+                    Console.WriteLine("Non virtual func in C");  
+                }  
+                
+            }  
+            class D : A // D是从A类继承 
+            {  
+                public new void Func() // 注意new ，表明覆盖父类里的同名类，而不是重新实现  
+                {  
+                    Console.WriteLine("Func In D");  
+                }  
+                
+                public new void Non_virtual()  
+                {  
+                    Console.WriteLine("Non virtual func in D");  
+                }  
+            }  
+            
+            class program  
+            {  
+                static void Main()  
+                {  
+                    A a;         // 定义一个申明类为A的a
+                    A b;         // 定义一个申明类为A的b
+                    A c;         // 定义一个申明类为A的c
+                    A d;         // 定义一个申明类为A的d
+                    D d1;        // 定义一个申明类为D的d1
+                    a = new A(); //   实例化
+                    b = new B();  
+                    c = new C();   
+                    d = new D();
+                    d1 = new D();  
+                    a.Func();    // 1.检查申明类A，函数为虚函数 2.检查实例类A，无重写，但为本身 3.执行实例A方法，输出结果 Func In A  
+                    b.Func();    // 1.检查申明类A，函数为虚函数 2.检查实例类B, 有重写 3.执行实例B方法，输出结果为 Func In B
+                    c.Func();    // 1.检查申明类A，函数为虚函数 2.检查实例类C，无重写，检查父类B，有重写 3.执行实例B方法，输出结果为 Func In B
+                    d.Func();    // 1.检查申明类A，函数为虚函数 2.检查实力类D，无重写 3.检查父类A，为本身 4.执行实例A方法，输出结果 Func In A
+                    d1.Func();   // 1.检查申明类D,函数为new，输出结果 Func In D  
+
+                    a.Non_virtual(); //执行A类的Non_virtual  
+                    b.Non_virtual(); //执行A类的Non_virtual  
+                    c.Non_virtual(); //执行A类的Non_virtual  
+                    d.Non_virtual(); //执行A类的Non_virtual  
+                    d1.Non_virtual(); //执行D类的Non_virtual  
+                }  
+            }  
+        </pre></code>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>协程线程进程</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="coreconcept.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>协程线程进程</h1>
+        <h2>1.什么是协程？</h2>
+        <p>协程就是一种特殊的函数，它可以主动的请求暂停自身并提交一个唤醒条件，Unity会在唤醒条件满足的时候去重新唤醒协程。</p>
+        <h2>2.如何使用？</h2>
+        <p>StartCoroutine()方法可以开启一个协程。
+        <br>在MonoBehaviour生命周期的Update和LateUpdate之间，会检查这个MonoBehaviour下挂载的所有协程，并唤醒其中满足唤醒条件的协程。
+        <br>要想使用协程，只需要以IEnumerator为返回值，并且在函数体里面用yield return语句来暂停协程并提交一个唤醒条件。然后使用StartCoroutine来开启协程。
+        <br>示例：
+        <pre><code>
+            IEnumerator CoroutineA(int arg1, string arg2)
+            {
+                Debug.Log($"协程A被开启了");
+                yield return null;
+                Debug.Log("刚刚协程被暂停了一帧");
+                yield return new WaitForSeconds(1.0f);
+                Debug.Log("刚刚协程被暂停了一秒");
+                yield return StartCoroutine(CoroutineB(arg1, arg2));
+                Debug.Log("CoroutineB运行结束后协程A才被唤醒");
+                yield return new WaitForEndOfFrame();
+                Debug.Log("在这一帧的最后，协程被唤醒");
+                Debug.Log("协程A运行结束");
+            }
+            ​
+            IEnumerator CoroutineB(int arg1, string arg2)
+            {
+                Debug.Log($"协程B被开启了，可以传参数，arg1={arg1}, arg2={arg2}");
+                yield return new WaitForSeconds(3.0f);
+                Debug.Log("协程B运行结束");
+            }
+        </code></pre>
+        </p>
+        <h2>3.应用场景</h2>
+        <p>
+            <ul>
+                <li>创建补间动画</li>
+                <li>打字机效果</li>
+                <li>异步加载资源</li>
+                <li>定时器</li>
+            </ul>
+        </p>
+        <h2>4.注意事项</h2>
+        <p><ul>
+            <li>协程是挂在MonoBehaviour上的，必须要通过一个MonoBehaviour才能开启协程。</li>
+            <li>MonoBehaviour被Disable的时候协程会继续执行，只有MonoBehaviour被销毁的时候协程才会被销毁。</li>
+            <li></li>
+        </ul></p>
+
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>
