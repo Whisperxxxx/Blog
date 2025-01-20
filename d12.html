@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深度优先遍历和广度优先遍历</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="datastruct.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>深度优先遍历和广度优先遍历</h1>
+        <h2>深度优先遍历(Depth First Search)</h2>
+        <p>
+            树是图的一种特例(连通无环的图就是树)。
+            <br>在树中，深度优先遍历就像前序遍历，如下图（实际上也可以是中序遍历和后序遍历）
+            <br><img src="DFS.png" width="500" height="400">
+        </p>
+
+        <p>
+            <bold>代码实现</bold>
+            <pre><code>
+public class TreeNode
+{
+    public int val;
+    public TreeNode left;
+    public TreeNode right;
+    
+    public TreeNode(int val = 0, TreeNode left = null, TreeNode right = null)
+    {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
+}
+
+public class Solution
+{
+    // 递归
+    public void DFS(TreeNode root)
+    {
+        if (root == null) return;
+
+        Console.Write(root.val + "");
+        DFS(root.left);
+        DFS(root.right);
+    }
+
+    // 迭代
+    public void DFS(TreeNode root)
+    {
+        if (root == null) return;
+
+        Stack&lt;TreeNode&gt; stack = new Stack&lt;TreeNode&gt;();
+        stack.Push(root);
+
+        while (stack.Count > 0)
+        {
+            TreeNode ndoe = stack.Pop();
+            Console.Write(node.val + "");
+
+            if (node.right != null)
+            {
+                stack.Push(node.right);
+            }
+            if (node.left != null)
+            {
+                stack.Push(node.left);
+            }
+        }
+    }
+}
+            </code></pre>
+        </p>
+        <h2>广度优先遍历(Breath First Search)</h2>
+        <P>
+            在树中，广度优先遍历就像层序遍历。用队列实现。
+            <br><img src="BFS.gif" width="500" height="500">
+        </P>
+        <p>
+            <bold>代码实现</bold>
+            <pre><colde>
+public class Solution
+{
+    public void BFS(TreeNode root)
+    {
+        if (root == null) return;
+
+        Queue&lt;TreeNode&gt; queue = new Queue&lt;TreeNode&gt;();
+        queue.Enqueue(root);
+
+        while (queue.Count > 0)
+        {
+            TreeNode node = queue.Dequeue();
+            Console.Write(node.val + " ");
+
+            if (node.left != null)
+            {
+                queue.Enqueue(root).left;
+            }
+
+            if (node.right != null)
+            {
+                queue.Enqueue(node.right);
+            }
+        }
+    }
+}
+            </colde></pre>
+        </p>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>

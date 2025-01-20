@@ -60,9 +60,64 @@
         <p><ul>
             <li>协程是挂在MonoBehaviour上的，必须要通过一个MonoBehaviour才能开启协程。</li>
             <li>MonoBehaviour被Disable的时候协程会继续执行，只有MonoBehaviour被销毁的时候协程才会被销毁。</li>
-            <li></li>
+            <li>协程不是线程，本质上是在主线程运行的，在主线程中通过yield进行暂停和恢复，分布在多帧中执行。这意味着
+                一旦你在协程中执行了一个耗时操作，很可能会堵塞主线程。这里提供两个解决思路：
+                <br>(1) 在耗时算法的循环体中加入yield return null来将算法分到很多帧里面执行；
+                <br>(2) 如果耗时操作里面没有使用Unity API，那么可以考虑在异步线程中执行耗时操作，完成后唤醒主线程中的协程。
+            </li>
         </ul></p>
+        <h2>5.Unity协程的底层原理</h2>
+        <p><bold>协程分为两部分，协程与协程调度器：</bold>协程仅是一个能够中间暂停返回的函数，而协程调度是在MonoBehaviour的生命周期中实现的。准确的说，Unity只实现了协程调度部分，而协程本身其实就是用了C#原生的”迭代器方法“。
+        <h3>5.1 协程本体：C#的迭代器函数</h3>
+        C#的迭代器方法就是一个协程，可以用yield暂停，用MoveNext()继续，当方法的返回值为IEnumerator类型，就会自动被解析成迭代器方法。调用此方法不会真的运行，而是返回一个迭代器，真的运行需要用MoveNext()。例子如下：
+        <pre><code>
 
+            static void Main(string[] args)
+            {
+            IEnumerator it = Test();//仅仅返回一个指向Test的迭代器，不会真的执行。
+            Console.ReadKey();
+            it.MoveNext();//执行Test直到遇到第一个yield
+            System.Console.WriteLine(it.Current);//输出1
+            Console.ReadKey();
+            it.MoveNext();//执行Test直到遇到第二个yield
+            System.Console.WriteLine(it.Current);//输出2
+            Console.ReadKey();
+            it.MoveNext();//执行Test直到遇到第三个yield
+            System.Console.WriteLine(it.Current);//输出test3
+            Console.ReadKey();
+            }
+            ​
+            static IEnumerator Test()
+            {
+            System.Console.WriteLine("第一次执行");
+            yield return 1;
+            System.Console.WriteLine("第二次执行");
+            yield return 2;
+            System.Console.WriteLine("第三次执行");
+            yield return "test3";
+            }
+        </code></pre>
+        <ul>
+            <li>执行Test()不会运行函数体，会直接返回一个IEnumerator</li>
+            <li>调用IEnumerator的MoveNext()成员，会执行协程直到遇到第一个yield return或者执行完毕。</li>
+            <li>调用IEnumerator的Current成员，可以获得yield return后面接的返回值，该返回值可以是任何类型的对象。</li>
+        </ul>
+        </p>
+        <h3>5.2 协程调度：MonoBehaviour生命周期中实现</h3>
+        <p>
+            <ul>
+                <li><bold>协程：</bold>调用 StartCoroutine()，Unity 会将协程注册到调度队列中，并准备在后续的帧更新中执行它。</li>
+                <li><bold>每帧调用 MoveNext()：</bold>在每一帧中，Unity 的调度器会调用活跃协程的 MoveNext() 方法，这会推进协程的执行。</li>
+                <li><bold>处理暂停和恢复：</bold>调度器通过解析 yield return 的返回值决定如何暂停协程。</li>
+                <li><bold>协程结束：</bold>当协程执行完毕时，MoveNext() 返回 false，调度器会将该协程移除，不再对其进行调度。</li>
+            </ul>
+        </p>
+
+        <h2>进程，线程与协程</h2>
+        <p><bold>进程是操作系统资源分配的基本单位;线程是处理器调度与执行的基本单位。</bold>
+        <br>这是操作系统书上的概念。具体的说，进程其实就是程序运行的实例，一个运行中的进程所占有的内存大体可以分为四个区域：栈区、堆区、数据区、代码区。其中代码区存储指令，另外三个区存储数据。
+        <br>线程是CPU调度的基本单位，一个线程往往和一个函数调用栈绑定，一个进程有多个线程，每个线程拥有自己的函数调用栈，同时共用进程的堆区，数据区，代码区。操作系统会不停地在不同线程之间切换来营造出一个并行的效果，这个策略称为时间片轮转法。
+        </p>
     </main>
     <footer>
     </footer>

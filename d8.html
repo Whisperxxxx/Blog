@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二叉树的应用</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="datastruct.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>二叉树的应用</h1>
+        <h2>二叉树的最大深度</h2>
+        <p>
+            <pre><code>
+public class TreeNode
+{
+    public int val;
+    public TreeNode left;
+    public TreeNode right;
+
+    public TreeNode(int val = 0, TreeNode left = null, TreeNode right = null)
+    {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
+}
+
+public class BinaryTree
+{
+    // 计算二叉树的最大深度（高度）
+    public int MaxDepth(TreeNode root)
+    {
+        if (root == null) return 0;
+
+        // 递归计算左右子树的深度
+        int leftDepth = MaxDepth(root.left);
+        int rightDepth = MaxDepth(root.right);
+
+        // 返回较大的深度并加1（包括当前节点）
+        return Math.Max(leftDepth, rightDepth) + 1;
+    }
+}
+            </code></pre>                
+        </p>
+        <h2>二叉树的对称</h2>
+        <p>
+            <pre><code>
+// TreeNode定义如上
+
+public class BinaryTree
+{
+    public bool IsSymmetric(TreeNode root)
+    {
+        if (root == null) return true;
+
+        return IsMirror(root.left, root.right);
+    }
+
+    public bool IsMirror(TreeNode left, TreeNode right)
+    {
+        if (left == null && right == null)
+        {
+            return true;
+        }
+
+        if (left == null || right == null)
+        {
+            return false;
+        }
+
+        if (left.val != right.val)
+        {
+            return false;
+        }
+
+        bool leftSubtree = IsMirror(left.left,right.right);
+        bool rightSubtree = IsMirror(left.right, right.left);
+        return leftSubtree && rightSubtree; 
+    }
+}
+
+            </code></pre>
+        </p>
+        <h2>二叉树的翻转</h2>
+        <p>
+            <pre><code>
+// 递归法
+public class BinaryTree
+{
+    public TreeNode InvertTree(TreeNode root)
+    {
+        if (root == null) return null;
+
+        TreeNode temp = InvertTree(root.left);
+        root.left = InvertTree(root.right);
+        root.right = temp;
+
+        return root;
+    }
+
+    public void PreOrder(TreeNode root)
+    {
+        if (root == null) return;
+        Console.Write(root.val + " ");
+        PreOrder(root.left);
+        PreOrder(root.right);
+    }
+}
+
+//迭代法 (DFS)
+public TreeNode InvertTree(TreeNode root)
+{
+    if (root == null) return null;
+
+    Stack&lt;TreeNode&gt; stack = new Stack&lt;TreeNode&gt;();
+    stack.Push(root);
+
+    while (stack.Count > 0)
+    {
+        TreeNode node = stack.Pop();
+
+        TreeNode temp = node.left;
+        node.left = node.right;
+        node.right = temp;
+
+        if (node.left != null) stack.Push(node.left);
+        if (node.right != null) stack.Push(node.right);
+    }
+    return root;
+}
+            </code></pre>
+        </p>
+        <h2>二叉树的直径</h2>
+        <p>
+            <pre><code>
+public class BinaryTree
+{
+    private int maxDiameter = 0; // 初始化边数为0；
+
+    public int CalDiameter(TreeNode root)
+    {
+        MaxDepth(root);
+
+        return maxDiameter;
+    }
+
+    public int MaxDepth(TreeNode root)
+    {
+        if (root == null) return 0;
+
+        int leftDepth = MaxDepth(root.left);
+        int rightDepth = MaxDepth(root.right);
+
+        // 更新最大直径，左右子树的深度之和即为路径的边数
+        maxDiameter = Math.Max(maxDiameter, leftDepth + rightDepth);
+
+        return Math.Max(leftDepth, rightDepth) + 1;
+    }
+}
+            </code></pre>
+        </p>
+        <h2>二叉树的路径和</h2>
+        <p>
+            <pre><code>
+// 暴力深度优先搜索（O(n^2)）
+public class BinaryTree
+{
+    public int PathSum(TreeNode root, int sum)
+    {
+        if (root == null) return 0;
+
+        return CountPath(root, sum) +
+                PathSum(root.left, sum) +
+                PathSum(root.right, sum);
+    }
+
+    private int CountPath(TreeNode root, int sum)
+    {
+        if (root == null) return 0;
+        int count = 0;
+
+        if (root.val == sum)
+        {
+            count++;
+        }
+
+        // 递归检查左右子树中的路径
+        count += CountPath(root.left, sum - root.val);
+        count += CountPath(root.right, sum - root.val);
+        return count;
+    }
+}
+// 哈希表
+
+            </code></pre>
+        </p>
+        <h2>二叉树的最大路径和</h2>
+        <p>
+            <pre><code>
+public class BinaryTree
+{
+    private int maxSum = int.MinValue;
+
+    public int maxPathSum(TreeNode root)
+    {
+
+        MaxGain(root);
+        return maxSum;
+    }
+
+    private int MaxGain(TreeNode node)
+    {
+        if (node == null) return 0;
+
+        int leftGain = Math.Max(MaxGain(node.left), 0);
+        int rightGain = Math.Max(MaxGain(node.right), 0);
+
+        int newPath = node.val + leftGain + rightGain;
+        maxSum = Math.Max(maxSum, newPath);
+
+        return node.val + Math.Max(leftGain, rightGain);
+    }
+}
+            </code></pre>
+        </p>
+        <h2>从前序和中序遍历序列构造二叉树</h2>
+        <p>
+            <pre><code>
+// 哈希表查找索引复杂度为O(1),递归了n次，所以复杂度为O(n)
+public class BinaryTree
+{
+    public TreeNode BuildTree(int[] preorder, int[] inorder)
+    {
+        // 使用字典存储中序遍历的元素及其索引
+        Dictionary&lt;int,int&gt; inorderMap = new Dictionary&lt;int,int&gt;();
+        for (int i = 0; i < inorder.Length; i++)
+        {
+            inorderMap[inorder[i]] = i
+        }
+
+        int preorderIndex = 0; // 先序遍历的第一个节点就是根节点
+
+        return Build(preorder, inorderMap, ref preorderIndex, 0, inorder.Length - 1);
+    }
+
+    public TreeNode Build(int[] preorder, Dictionary&lt;int,int&gt; inorderMap, ref int preorderIndex, int inorderStart, int inorderEnd)
+    {
+        if (inorderStart > inorderEnd) return null;
+        
+        // 从先序遍历中取出当前节点
+        int rootVal = preorder(preorderIndex++);
+        TreeNode root = new TreeNode(rootVal);
+
+        // 找到当前节点在中序遍历中的位置
+        int inorderIndex = inorderMap[rootVal];
+
+        root.left = Build(preorder, inorderMap, ref preorderIndex, inorderStart, inorderIndex - 1);
+        root.right = Build(preorder, inorderMap, ref preorderIndex, inorderIndex + 1, inorderEnd);
+
+        return root;
+    }
+}
+
+// 迭代法
+public class BinaryTree
+{
+    public TreeNode BuildTree(int[] preorder, int[] inorder)
+    {
+        TreeNode root = new TreeNode(preorder[0]);
+        Stack&lt;TreeNode&gt; stack = new Stack&lt;TreeNode&gt;();
+        stack.Push(root);
+
+        int inorderIndex =0 ;
+        for (int i = 1; i < preorder.Length; i++)
+        {
+            TreeNode cur = new TreeNode(preorder[i]);
+            TreeNode pre = stack.Peek();
+
+            if (pre.val != inorder[inorderIndex])
+            {
+                pre.left = cur;
+            }
+            else
+            {
+                while (stack.Count >0 && inorder[inorderIndex] == stack.Peek().val)
+                {
+                    inorderIndex++;
+                    pre = stack.Pop();
+                }
+                pre.right = cur;
+            }
+            stack.Push(cur);
+        }
+        return root;
+    }
+}
+            </code></pre>
+        </p>
+        <h2>从后序和中序遍历序列构造二叉树</h2>
+        <p>
+            <pre><code>
+
+// 迭代法
+public class BinaryTree
+{
+    public TreeNode BuildTree(int[] inorder, int[] postorder)
+    {
+        TreeNode root = new TreeNode(postorder[postorder.Length - 1]);
+        Stack<TreeNode> stack = new Stack<TreeNode>();
+        stack.Push(root);
+
+        int inorderIndex = inorder.Length - 1;
+        for (int i = postorder.Length - 2; i >= 0; i--)
+        {
+            TreeNode cur = new TreeNode(postorder[i]);
+            TreeNode pre = stack.Peek();
+
+            if (pre.val != inorder[inorderIndex])
+            {
+                pre.right = cur;
+            }
+            else
+            {
+                while (stack.Count >0 && inorder[inorderIndex] == stack.Peek().val)
+                {
+                    inorderIndex --;
+                    pre = stack.Pop();
+                }
+                pre.left = cur;
+            }
+            stack.Push(cur);
+        }
+        return root;
+    }
+}
+            </code></pre>
+        </p>
+        <h2>二叉树的右视图</h2>
+        <p>
+            <pre><code>
+public class BinaryTree
+{
+    public IList&lt;int&gt; RightSideView(TreeNode root){
+        List<int> result = new List<int>();
+        if (root == null) return result;
+
+        Queue&lt;TreeNode&gt; queue = new  Queue&lt;TreeNode&gt;();
+        queue.Enqueue(root);
+
+        while(queue.Count > 0)
+        {
+            int nodeCount = queue.Count;
+            
+            for (int i = 0; i < nodeCount; i ++)
+            {
+                TreeNode node = queue.Dequeue();
+
+                if (i == nodeCount - 1)
+                {
+                    result.Add(node.val);
+                }
+
+                if (node.left != null) queue.Enqueue(node.left);
+                if (node.right != null) queue.Enqueue(node.right);
+            }
+        
+        }
+
+        return result;
+    }
+}
+            </code></pre>
+        </p>
+        <h2>将二叉树展开为链表</h2>
+        <p>
+            <pre><code>
+public class BinaryTree 
+{
+    public void Flatten(TreeNode root) 
+    {
+        TreeNode cur = root;
+
+        while (cur != null)
+        {
+            if (cur.left != null)
+            {
+                TreeNode rightmost = cur.left;
+                while (rightmost.right != null)
+                {
+                    rightmost = rightmost.right;
+                }
+                rightmost.right = cur.right;
+                cur.right = cur.left;
+                cur.left = null;
+            }
+            cur = cur.right;
+        }
+    }
+}
+            </code></pre>
+        </p>
+        <h2>二叉树的最近公共祖先</h2>
+        <p>
+            <pre><code>
+public class BinaryTree 
+{
+    public TreeNode LowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        // 如果当前节点为空或者p或者q，则当前节点就是最近公共祖先
+        if (root == null || root == p || root == q) return root;
+
+        TreeNode left = LowestCommonAncestor(root.left, p, q);
+        TreeNode right = LowestCommonAncestor(root.right, p, q);
+
+
+        if (left != null && right != null)
+        {
+            return root;
+        }
+        return left != null ? left : right;
+    }
+}
+            </code></pre>
+        </p>
+        <h2>使用</h2>
+        <p>
+            <pre><code>
+class Program
+{
+    static void Main()
+    {
+        TreeNode root = new TreeNode(1);
+        root.left = new TreeNode(2);
+        root.right = new TreeNode(3);
+        root.left.left = new TreeNode(4);
+        root.left.right = new TreeNode(5);
+        root.right.left = new TreeNode(6);
+        root.right.right = new TreeNode(7);
+
+        BinaryTree tree = new BinaryTree();
+
+        // 1. 计算二叉树的最大深度
+        int maxDepth = tree.MaxDepth(root);
+        Console.WriteLine($"Max Depth: {maxDepth}");
+        
+        // 2. 判断二叉树是否对称
+        bool isSymmetric = tree.IsSymmetric(root);
+        Console.WriteLine($"Is Symmetric: {isSymmetric}");
+
+        // 3. 原始树的前序遍历
+        Console.WriteLine("Original Tree PreOrder:");
+        tree.PreOrder(root);
+        Console.WriteLine();
+
+        // 4. 翻转二叉树
+        root = tree.InvertTree(root);
+
+        // 5. 翻转后的树的前序遍历
+        Console.WriteLine("Inverted Tree PreOrder:");
+        tree.PreOrder(root);
+        Console.WriteLine();
+
+        // 6. 计算二叉树的直径
+        int diameter = tree.CalDiameter(root);
+        Console.WriteLine($"Diameter of the tree: {diameter}");
+
+        // 7. 计算二叉树的路径和为sum的路径的个数
+        int pathCount = tree.PathSum(root, 10);
+        Console.WriteLine($"The count is : {pathCount}");
+
+        // 8. 计算二叉树的最大路径和
+        int maxPath = tree.maxPathSum(root);
+        Console.WriteLine($"The max path sum is : {maxPath}");
+
+    }
+}
+            </code></pre>
+        </p>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>

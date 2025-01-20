@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>复杂度分析</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="datastruct.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>复杂度分析</h1>
+        <h2>时间复杂度</h2>
+        <p>
+            时间复杂度表示算法执行所需时间的增长率。它衡量的是输入规模增大时，算法运行时间的变化趋势。通常用大O符号表示，表示最坏情况下的运行时间。
+        </p>
+        <p>
+            <h3>计算步骤：</h3>
+            <ul>
+                <li>找出算法的基本操作，即最消耗时间的操作。</li>
+                <li>分析基本操作的执行次数随输入规模n的变化。</li>
+                <li>用大O符号表示这个执行次数的增长率。</li>
+            </ul>
+        </p>
+        <h2>空间复杂度</h2>
+        <p>
+            空间复杂度表示算法执行过程中所需额外空间的增长率。
+        </p>
+        <p>
+            <h3>计算步骤：</h3>
+            <ul>
+                <li>计算算法运行过程中所需的固定空间（常量空间）。</li>
+                <li>计算算法运行过程中与输入规模n相关的空间</li>
+                <li>用大O符号表示这个空间的增长率。</li>
+            </ul>
+        </p>
+        <h3>常见复杂度</h3>
+        <ul>
+            <li>O(1): 常数，不随输入规模变化。例如，访问数组中的某个元素。</li>
+            <li>O(log n): 对数，常见于二分查找等算法。</li>
+            <li>O(n): 线性，算法的时间/空间随输入规模成正比，例如简单的遍历。</li>
+            <li>O(nlogn): 线性对数，常见于快速排序、归并排序等算法。</li>
+            <li>O(n^2): 二次方，常见于双重循环算法，例如冒泡排序。</li>
+        </ul>
+        <h3>大O符号、Ω符号、θ符号的区别</h3>
+        <p>
+            <ul>
+                <li><bold>O:</bold>在最坏的情况下，算法的运行时间的上限，即算法的最大执行时间。</li>
+                <li><bold>Ω:</bold>最好的情况下，算法的运行时间的下限，即算法的最小执行时间。</li>
+                <li><bold>θ:</bold>平均运行时间。</li>
+            </ul>
+        </p>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>

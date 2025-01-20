@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>队列</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="datastruct.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>队列</h1>
+        <h2>定义</h2>
+        <p>队列是一种<bold>线性数据结构</bold>，遵循先进先出（First In First Out, FIFO）原则。在队列中，我们只能从一端插入元素（称为队尾 rear），从另一端移除元素（称为队头 front）。</p>
+        <h2>队列的基本操作</h2>
+        <p>
+            队列有四种基本操作：
+            <br>1.<bold>Enqueue（入队）</bold>：将一个元素添加到队尾。
+            <br>2.<bold>Dequeue（出队）</bold>：移除队头元素，并返回该元素。
+            <br>3.<bold>Peek/Front（查看队头元素）</bold>：获取队头元素的值，但不移除它。
+            <br>4.<bold>isEmpty（判断队列是否为空）</bold>：检查队列中是否有元素。
+        </p>
+        <h2>数组实现</h2>
+        <p>
+            <pre><code>
+public class Queue
+{
+    private int[] arr;
+    private int front;
+    private int rear;
+    private int maxSize;
+
+    public Queue(int size)
+    {
+        maxSize = size;
+        arr = new int[maxSize];
+        front = 0;
+        rear = -1;
+    }
+
+    public void Enqueue(int val)
+    {
+        if (rear < maxSize - 1)
+        {
+            arr[++rear] = val;
+        }
+        else
+        {
+            Console.WriteLine("Queue Overflow");
+        }
+    }
+
+    public int Dequeue()
+    {
+        if (front <= rear)
+        {
+            int dequeueVal = arr[front];
+            front ++;
+            return dequeueVal;
+        }
+        else
+        {
+            Console.WriteLine("Queue underflow");
+            return -1;
+        }
+    }
+
+    public int Peek()
+    {
+        if (front <= rear)
+        {
+            return arr[front];
+        }
+        else
+        {
+            Console.WriteLine("Queue is empty");
+            return -1;
+        }
+    }
+
+    public bool IsEmpty()
+    {
+        return front > rear;
+    }
+}
+            </code></pre>
+        </p>
+        <h2>循环数组实现</h2>
+        <p>
+            <pre><code>
+public clas Queue
+{
+    private int[] arr;
+    private int front;
+    private int rear;
+    private int maxSize;
+    private int currentSize;
+
+    public Queue(int size)
+    {
+        maxSize = size;
+        arr = new int[maxSize];
+        front = 0;
+        rear = -1;
+        currentSize = 0;
+    }
+
+    public void Enqueue(int val)
+    {
+        if (currentSize < maxSize)
+        {
+            rear = (rear + 1) % maxSize;
+            arr[rear] = val;
+            currentSize++;
+        }
+        else
+        {
+            Console.WriteLine("Queue overflow");
+        }
+    }
+
+    public int Dequeue()
+    {
+        if (currentSize > 0)
+        {
+            int dequeueVal = arr[front];
+            front = (front + 1) % maxSize;
+            currentSize--;
+            return dequeueVal;            
+        }
+        else
+        {
+            Console.WriteLine("Queue underflow");
+            return -1;
+        }
+    }
+
+    public int Peek()
+    {
+        if (currentSize > 0)
+        {
+            return arr[front];
+        }
+        else
+        {
+            Console.WriteLine("Queue is empty");
+            return -1;
+        }
+    }
+
+    public bool IsEmpty()
+    {
+        return currentSize == 0;
+    }
+}
+            </code></pre>
+        </p>
+
+        <h3>链表实现</h3>
+        <p>
+            <pre><code>
+public class Node
+{
+    public int val;
+    public Node next;
+
+    public Node(int val = 0, Node next = null)
+    {
+        this.val = val;
+        this.next = next;
+    }
+}
+
+public class Queue
+{
+    private Node front;
+    private Node rear;
+
+    public Queue()  
+    {
+        front = null;
+        rear = null;
+    }
+
+    public void Enqueue(int val)
+    {
+        Node newNode = new Node(val);
+        if (rear != null) 
+        {
+            rear.next = newNode;
+            rear = newNode;
+        }
+        else
+        {
+            front = newNode;
+            rear = newNode;
+        }
+    }
+
+    public int Dequeue()
+    {
+        if (front != null)
+        {
+            int dequeueVal = front.val;
+            front = front.next;
+            if (front == null) // 队列变空
+            {
+                rear = null;
+            }
+            return dequeueVal;
+        }
+        else
+        {
+            Console.WriteLine("Queue underflow");
+            return -1;
+        }
+    }
+
+    public int Peek()
+    {
+        if (front != null)
+        {
+            return front.val;
+        }
+        else
+        {
+            Console.WriteLine("Queue is empty");
+            return -1;
+        }
+    }
+
+    public bool IsEmpty()
+    {
+        return front == null;
+    }
+}
+            </code></pre>
+        </p>
+        <h2>基于循环数组的双端队列</h2>
+        <p>
+            <pre><code>
+ public class Dequeue // de是Double-ended的缩写    
+ {
+    private int[] arr;
+    private int front;
+    private int rear;
+    private int maxSize;
+
+    public Dequeue(int size)
+    {
+        maxSize = size + 1; // 留一个空位避免满和空的状态冲突
+        arr = new int[maxSize];
+        rear = 0; //和正常队列初始化不一样，这里是0.
+        front = 0; // 
+    }
+
+    public bool IsFull()
+    {
+        return (rear + 1) % maxSize == front; 
+    }
+    
+    public bool IsEmpty()
+    {
+        return front == rear;
+    }
+
+    // front指的是当前的位置.所以在插入头部时，需要先更新指针，再赋值.而在删除头部时，则是需要先删除，再更新。
+    // rear指的是下一个位置，所以再插入尾部时，需要先插入，再更新.而再删除尾部时，需要先更新，再插入。
+    public void AddLast(int val)
+    {
+        if (IsFull())
+        {
+            Console.WriteLine("Deque overflow");
+        }
+
+        arr[rear] = val;
+        rear = (rear + 1) % maxSize;
+    }
+
+    public int RemoveFirst()
+    {
+        if (IsEmpty())
+        {
+            Console.WriteLine("Deque underflow");
+            return -1;
+        }
+        
+        int dequeueVal = arr[front];
+        front = (front + 1) % maxSize;
+        return dequeueVal;
+    }
+    
+    public void AddFirst(int val)
+    {
+        if (IsFull())
+        {
+            Console.WriteLine("overflow");
+        }
+        front = (front -1 + maxSize) % maxSize;
+        arr[front] = val;
+    }
+
+    public int RemoveLast()
+    {
+        if (IsEmpty())
+        {
+            Console.WriteLine("Deque underflow");
+            return -1;
+        }
+        
+        rear = (rear - 1 + maxSize) % maxSize;
+        int dequeueVal = arr[rear];
+        return dequeueVal;
+    }
+
+    // 查看队头元素
+    public int PeekFirst()
+    {
+        if (currentSize > 0)
+        {
+            return arr[front];
+        }
+        else
+        {
+            Console.WriteLine("Deque is empty");
+            return -1;
+        }
+    }
+
+    // 查看队尾元素
+    public int PeekLast()
+    {
+        if (currentSize > 0)
+        {
+            return arr[rear];
+        }
+        else
+        {
+            Console.WriteLine("Deque is empty");
+            return -1;
+        }
+    }
+ }        
+            </code>
+            </pre>
+        </p>
+        <h2>基于双向链表的双端队列</h2>
+        <p>
+            <pre><code>
+public class Node
+{
+    public int val;
+    public Node next;
+    public Node prev;
+
+    public Node(int val = 0, Node next = null, Node prev = null)
+    {
+        this.val = val;
+        this.next = next;
+        this.prev = prev;
+    }
+}
+
+public class Dequeue
+{
+    private Node head;
+    private Node tail;
+
+    public Deque()
+    {
+        head = null;
+        tail = null;
+    }
+
+    public void AddFirst(int val)
+    {
+        Node newNode = new Node(val);
+
+        if (head != null)
+        {
+            newNode.next = head;
+            head.prev = newNode;
+            head = newNode;
+        }
+        else
+        {
+            head = tail = newNode;
+        }
+    }
+
+    public void AddLast(int val)
+    {
+        Node newNode = new Node(val);
+
+        if (tail != null)
+        {
+            tail.next = newNode;
+            newNode.prev = tail;
+            tail = newNode;
+        }
+        else
+        {
+            head = tail = newNode;
+        }
+    }
+
+    public int RemoveFirst()
+    {
+        if (head != null)
+        {
+            int dequeuval = head.val;
+            head = head.next;
+            if (head != null)
+            {
+                head.prev = null;
+            }
+            else
+            {
+                tail = null;
+            }
+            return dequeuval;
+        }
+        else
+        {
+            Console.WriteLine("Deque is empty");
+            return -1;
+        }
+    }
+
+    public int RemoveLast()
+    {
+        if (tail != null)
+        {
+            int dequeueval = tail.val;
+            tail = tail.prev;
+            if (tail != null)
+            {
+                tail.next = null;
+            }
+            else
+            {
+                head = null;
+            }
+            return dequeuval;
+        }
+        else
+        {
+            Console.WriteLine("Deque is empty");
+            return -1;
+        }
+    }
+
+    public int PeekFirst() => head != null ? head.val : -1;
+    public int PeekLast() => tail != null ? tail.val : -1;
+    public bool IsEmpty() => head == null;
+}
+            </code></pre>
+        </p>
+
+        <h2>C#自带的基本队列:Queue<T></h2>
+        <p>
+            <pre><code>
+using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        Queue &lt;int&gt; queue = new Queue&lt;int&gt;();
+
+        // Enqueue: 添加元素到队尾
+        queue.Enqueue(1);
+        queue.Enqueue(2);
+        queue.Enqueue(3);
+
+        // Peek: 查看队头元素，不移除
+        Console.WriteLine("Front element: " + queue.Peek()); // 输出 1
+
+        // Dequeue: 移除队头元素
+        Console.WriteLine("Dequeued element: " + queue.Dequeue()); // 输出 1
+
+        // 检查队列是否为空
+        Console.WriteLine("Is queue empty? " + queue.Count == 0); // 输出 False
+    }
+}
+            </code></pre>
+        </p>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>

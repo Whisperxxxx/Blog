@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>栈</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="datastruct.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>栈</h1>
+        <h2>定义</h2>
+        <p>
+            栈是一种<bold>线性数据结构</bold>，只能从顶部添加或移除元素。遵循后进先出(LIFO, Last In First Out)原则。
+            <br><img src="stack.png" width="300" height="200">
+        </p>
+        <h2>栈的基本操作</h2>
+        <p>
+            栈有四种基本操作：
+            <br>1.<bold>Push（入栈）</bold>：将一个元素添加到栈顶。
+            <br>2.<bold>Pop（出栈）</bold>：移除栈顶元素，并返回该元素。
+            <br>3.<bold>Peek/Top（查看栈顶元素）</bold>：获取栈顶元素的值，但不移除它。
+            <br>4.<bold>isEmpty（判断栈是否为空）</bold>：检查栈中是否有元素。
+        </p>
+        <h2>数组实现</h2>
+        <p>
+            <pre><code>
+public class Stack{
+    private int[] arr;
+    private int top;
+    private int maxSize;
+
+    public Stack(int size)
+    {
+        maxSize = size;
+        arr = new int[maxSize];
+        top = -1;    // 表示栈为空
+    }
+
+    public void Push(int value)
+    {
+        if (top < maxSize - 1)
+        {
+            arr[++top] = value;
+        }
+        else{
+            Console.WriteLine("Stack overflow");
+        }
+    }
+
+    public int Pop()
+    {
+        if (top >= 0)
+        {
+            return arr[top--];
+        }
+        else
+        {
+            Console.WriteLine("Stack underflow");
+            return -1;
+        }
+    }
+
+    public int Peek()
+    {
+        if (top >= 0)
+        {
+            return arr[top];
+        }
+        else
+        {
+            Console.WriteLine("Stack is empty)
+            return -1;
+        }
+    }
+    
+    public bool IsEmpty()
+    {
+        return top == -1;
+    }
+}
+            </code></pre>
+        </p>
+        <h2>链表实现</h2>
+        <p>
+            <pre><code>
+public class Node
+{
+    public int val;
+    public Node next;
+    
+    public Node(int val = 0, Node next = null)
+    {
+        this.val = val;
+        this.next = next;
+    }
+}
+
+public class Stack
+{
+    private Node top;
+
+    public Stack()
+    {
+        top = null;
+    }
+
+    public void Push(int val)
+    {
+        Node newNode = new Node(val, top);
+        top = newNode;
+    }
+    
+    public int Pop()
+    {
+        if (top != null)
+        {
+            int value = top.val;
+            top = top.next;
+            return value;
+        }
+        else
+        {
+            Console.WriteLine("Stack underflow");
+            return -1;
+        }
+    }
+
+    public int Peek()
+    {
+        if (top != null)
+        {
+            return top.val;
+        }
+        else
+        {
+            Console.WriteLine("Stack is empty");
+            return -1;
+        }
+    }
+
+    public bool IsEmpty()
+    {
+        return top == null;
+    }
+}
+            </code></pre>
+        </p>
+        
+        <h2>使用</h2>
+        <p>
+            <pre><code>
+ class Program
+ {
+    static void Main()
+    {
+        Stack stack = new Stack();
+
+        // 入栈操作
+        stack.Push(10);
+        stack.Push(20);
+        stack.Push(30);
+
+        // 查看栈顶元素
+        Console.WriteLine("Top element: " + stack.Peek()); // 输出 30
+
+        // 出栈操作
+        Console.WriteLine("Popped element: " + stack.Pop()); // 输出 30
+        Console.WriteLine("Popped element: " + stack.Pop()); // 输出 20
+
+        // 检查栈是否为空
+        Console.WriteLine("Is stack empty? " + stack.IsEmpty()); // 输出 False
+
+        // 再次查看栈顶元素
+        Console.WriteLine("Top element: " + stack.Peek()); // 输出 10
+    }
+ }               
+            </code></pre>
+        </p>
+        <h2>C#自带的栈</h2>
+        <p>
+            <pre><code>
+using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        // 创建一个栈实例，存储整数类型
+        Stack&lt;int&gt; stack = new Stack&lt;int&gt;();
+
+        // 入栈操作
+        stack.Push(10);
+        stack.Push(20);
+        stack.Push(30);
+
+        // 查看栈顶元素
+        Console.WriteLine("Top element: " + stack.Peek()); // 输出 30
+
+        // 出栈操作
+        Console.WriteLine("Popped element: " + stack.Pop()); // 输出 30
+        Console.WriteLine("Popped element: " + stack.Pop()); // 输出 20
+
+        // 检查栈是否为空
+        Console.WriteLine("Is stack empty? " + stack.Count == 0); // 输出 False
+
+        // 再次查看栈顶元素
+        Console.WriteLine("Top element: " + stack.Peek()); // 输出 10
+    }
+}
+            </code></pre>
+        </p>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>

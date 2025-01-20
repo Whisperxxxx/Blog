@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>拓扑排序</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="datastruct.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>拓扑排序</h1>
+        <h2>定义</h2>
+        <p>
+            拓扑排序是图论中的一种重要算法，它用于有向无环图(DAG, Directed Acyclic Graph)中，将图中的所有顶点排序，使得对于图中的每一条有向边 u -> v,顶点u都排在v之前。拓扑排序的结果不是唯一的，可能存在多个合法的排序。
+        </p>
+        <h2>性质</h2>
+        <p>
+            <ul>
+                <li><bold>1.必须是DAG</bold></li>
+                <li><bold>2.不唯一性</bold></li>
+            </ul>
+        </p>
+        <h2>实现方式</h2>
+        <h3>Kahn算法</h3>
+        <p>
+            Kahn算法使用广度优先搜索( BFS )来实现拓扑排序。具体步骤如下：
+            <br><bold>1.初始化</bold>
+            <ul>
+                <li>计算图中所有顶点的入度。</li>
+                <li>将所有入度为0的顶点放入一个队列中。</li>
+            </ul>
+            <bold>2.遍历</bold>
+            <ul>
+                <li>从队列中取出一个顶点，将其添加到拓扑排序结果中。</li>
+                <li>对该顶点的每个邻接顶点, 将其入度减1。如果某个邻接顶点的入度变为0，则将其加入队列。</li>
+            </ul>
+            <bold>3.检查是否有环</bold>
+            <ul>
+                <li>如果队列中的顶点处理完毕，且仍然有顶点未被处理（即它们的入度不为0），则说明图中存在环，无法进行拓扑排序。</li>
+                <li>否则，拓扑排序完成。</li>
+            </ul>
+        </p>
+        <h2>课程表问题</h2>
+        <h3>Kahn算法实现</h3>
+        <pre><code>
+public class Solution
+{
+    public bool CanFinish(int numCourses, int[][] prerequisites)
+    {
+        Dictionary&lt;int, List&lt;int&gt;&gt; graph = new Dictionary&lt;int, List&lt;int&gt;&gt;();
+        int[] inDegree = new int[numCourses];
+
+        for (int i = 0; i < prerequisites.Length; i++)
+        {
+            int course = prerequisites[i][0];
+            int pre = prerequisites[i][1];
+
+            if (!graph.ContainsKey(pre))
+            {
+                graph[pre] = new List&lt;int&gt;();
+            }
+
+            graph[pre].Add(course);
+            inDegree[course]++;
+        }
+
+        Queue&lt;int&gt; queue = new Queue&lt;int&gt;();
+        
+        for (int i = 0; i < numCourses; i ++)
+        {
+            if (inDegree[i] == 0)
+            {
+                queue.Enqueue(i);
+            }
+        }
+
+        int completeCourse = 0;
+        while (queue.Count > 0)
+        {
+            int course = queue.Dequeue();
+            completeCourse++;
+            if (graph.ContainsKey(course))
+            {
+                List&lt;int&gt; nextCourses = graph[course];
+                
+                foreach (int nextCourse in nextCourses)
+                {
+                    inDegree[nextCourse]--;
+                    if (inDegree[nextCourse] == 0)
+                    {
+                        queue.Enqueue(nextCourse);
+                    }
+                }
+    
+            }
+        }
+        return completeCourse == numCourses;
+    }
+}
+        </code></pre>
+
+        <h3>DFS算法实现</h3>
+        <pre><code>
+public class Solution
+{
+    public bool CanFinish(int numCourses, int[][] prerequisites)
+    {
+        Dictionary&lt;int, List&lt;int&gt;&gt; graph = new Dictionary&lt;int, List&lt;int&gt;&gt;();
+
+        for (int i = 0; i < prerequisites.Length; i ++)
+        {
+            int course = prerequisites[i][0];
+            int pre = prerequisites[i][1];
+
+            if (!graph.ContainsKey(pre))
+            {
+                graph[pre] = new List&lt;int&gt;();
+            }
+            graph[pre].Add(course);
+        }
+
+        int[] visited = new int[numCourses];
+
+        for (int i = 0; i < numCourses; i ++)
+        {
+            if (visited[i] == 0 && !DFS(i, graph, visited))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private bool DFS(int course,  Dictionary&lt;int, List&lt;int&gt;&gt; graph, int[] visited)
+    {
+        if (visited[course] == 1) return false;
+        if (visited[course] == 2) return true;
+        
+        visited[course] = 1;
+
+        if (graph.ContainsKey(course))
+        {
+            List&lt;int&gt; nextCourses = graph[course];
+
+            foreach(int nextCourse in nextCourses)
+            {
+                if (!DFS(nextCourse, graph, visited))
+                {
+                    return false;
+                }
+            }
+        }
+
+        visited[course] = 2;
+        return true;
+    }
+}
+        </code></pre>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>

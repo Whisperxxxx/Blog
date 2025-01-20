@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>堆</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="datastruct.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>堆</h1>
+        <h2>定义</h2>
+        <p>
+            堆是一个完全二叉树，但满足以下性质
+            <li><bold>最大堆（Max Heap）：</bold>父节点的值大于等于子节点的值，根节点是最大值。</li>
+            <li><bold>最小堆（Min Heap）：</bold>父节点的值小于等于子节点的值，根节点是最小值。</li>
+        </p>
+        <h2>存储关系</h2>
+        <p>
+            当堆存储在数组中, 假设当前节点的下标为i，则：
+            <li>左子节点的下标：2i + 1</li>
+            <li>右子节点的下标：2i + 2</li>
+            <li>父节点的下标：(i - 1) / 2</li>
+        </p>
+        <h2>基础操作</h2>
+        <p>
+            <li><bold>插入操作（Insert）:</bold>将元素添加到堆的末尾，然后使用上浮操作（Bubble Up 或 Swim）</li>
+            <li><bold>删除操作（Delete）:</bold>将堆顶元素与堆的最后一个元素交换，然后使用下沉操作（Heapify Down 或 Sink）</li>
+            <li><bold>构建堆（Build Heap）:</bold>    
+                <br>1.自底向上：从数组的最后一个非叶节点开始，逐个向前进行下沉操作。适合从无序数组构建堆，复杂度为O(n)。 
+                <br>2.自顶向下：通常用于插入法，复杂度为O(n log n)</li>
+        </p>
+        <h2>上浮与下沉</h2>
+        <pre><code>
+public class Heap
+{
+    private List<int> heap;
+
+    public Heap()
+    {
+        heap = new List<int>();
+    }
+
+    // 上浮
+    public void Swim(List&lt;int&gt; heap, int index)
+    {
+        int parent = (index - 1) / 2;
+        while (index > 0 && heap[index] > heap[parent])
+        {
+            int temp = heap[index];
+            heap[index] = heap[parent];
+            heap[parent] = temp;
+
+            index = parent;
+            parent = (index - 1) / 2;
+        }
+    }
+    
+    // 下沉
+    public void Sink(List&lt;int&gt; heap, int index)
+    {
+        int n = heap.Count;
+        while(true)
+        {
+            int left = 2 * index + 1;
+            int right = 2 * index + 2;
+            int largest = index;
+
+            if (left < n && heap[left] > heap[largest]) 
+            {
+                largest = left;
+            }
+
+            if (right < n && heap[right] > heap[largest]) 
+            {
+                largest = right;
+            }
+
+            if (largest != index)
+            {
+                // 交换当前节点和较大的子节点
+                int temp = heap[index];
+                heap[index] = heap[largest];
+                heap[largest] = temp;
+
+                // 更新索引，继续向下调整
+                index = largest;
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+}
+        
+        </code></pre>
+        <h2>插入操作</h2>
+        <pre><code>
+    public void Insert(int value)
+    {
+        heap.Add(value); // 添加到堆的末尾
+        Swim(heap, heap.Count - 1); // 调整堆
+    }
+        </code></pre>
+    <h2>删除操作</h2>
+
+<pre><code>
+
+    public  int Delete()
+    {
+        if (heap.Count == 0) return -1;
+
+        // 交换堆顶元素和最后一个元素
+        int top = heap[0];
+        heap[0] = heap[heap.Count - 1];
+        heap.RemoveAt(heap.Count - 1); // 删除最后一个元素
+
+        Sink(heap, 0); // 调整堆
+
+        return top; // 返回删除的堆顶元素
+    }
+
+</code></pre>
+
+<h2>构建堆</h2>
+    <pre><code>
+    // 自底向上
+    public void BuildHeap(List&lt;int&gt; heap)
+    {
+        int n = heap.Count;
+        
+        for (int i = n / 2 - 1; i >= 0; i--)
+        {
+            Sink(heap, i); 
+        }
+    }
+
+    // 自顶向下
+    public void BuildHeap(List&lt;int&gt; heap)
+    {
+        int n = heap.Count;
+
+        for (int i = 0; i < n; i++)
+        {
+            Swim(heap, i); 
+        }
+    }
+    </code></pre>
+    <h2>查看堆顶</h2>
+    <pre><code>
+    public int Peek()
+    {
+        if (heap.Count == 0) return -1;
+        return heap[0];
+    }
+    </code></pre>
+    <h2>使用</h2>
+    <pre><code>
+class Program
+{
+    static void Main()
+    {
+        Heap Heap = new Heap();
+
+        // 插入
+        Heap.Insert(20);
+        Heap.Insert(15);
+        Heap.Insert(30);
+        Heap.Insert(10);
+        Heap.Insert(25);
+
+        // 删除
+        int deletedElement = Heap.Delete();
+
+        // 构建
+        List&lt;int&gt; unorderedList = new List&lt;int&gt; { 10, 20, 5, 30, 25 };
+        Heap.BuildHeap(unorderedList);
+    }
+}
+    </code></pre>
+    <h2>优先队列</h2>
+    <p>
+        优先队列（Priority Queue）是一种特殊的队列数据结构，它能够根据元素的优先级来确定元素的顺序。
+        <br>主要操作包括：
+        <li>1.插入操作：如上述代码所示，时间复杂度为O(log n)。</li>
+        <li>2.删除操作：如上述代码所示，时间复杂度为O(log n)。</li>
+        <li>3.查看栈顶操作：如上述代码所示，时间复杂度为O(1)。</li>
+    </p>
+
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>

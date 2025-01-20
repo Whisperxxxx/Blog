@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>链表</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="datastruct.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>链表</h1>
+        <h2>定义</h2>
+        <p>链表（Linked List）是一种<bold>线性数据结构</bold>，它由一系列节点（Node）组成，每个节点包含两个部分：一个存储数据的部分和一个指向下一个节点的指针。</p>
+        <h2>链表的基本概念</h2>
+        <p><ul>
+            <li><bold>节点（Node）：</bold>
+            <br><bold>1.数据域（Data）：</bold>存储节点的值。
+            <br><bold>2.指针域（Next）：</bold>指向链表中的下一个节点。
+            </li>
+            <li><bold>链表头（Head）：</bold>链表的入口，即第一个节点的引用。</li>
+        </ul></p>
+        <h2>链表的类型</h2>
+        <p>
+            <bold>1.单向链表（Singly Linked List）：</bold>
+            <ul>
+                <li>每个节点仅指向下一个节点。</li>
+                <li>最后一个节点的指针指向 null，表示链表的结束。</li>
+            </ul>
+            <bold>2.双向链表（Doubly Linked List）：</bold>
+            <ul>
+                <li>每个节点包含两个指针，一个指向下一个节点，一个指向前一个节点。</li>
+                <li>头节点的前指针指向 null，尾节点的后指针指向 null。</li>
+            </ul>
+            <bold>3.循环链表（Circular Linked List）：</bold>
+            <ul>
+                <li>如果是单向循环链表，就是单向链表的尾节点的指针指向头节点。</li>
+                <li>如果是双向循环链表，就是双向链表的头节点的前指针指向尾节点，尾节点的后指针指向头节点。</li>
+            </ul>
+        </p>
+        <h2>链表的基本操作</h2>
+        <p>
+            <bold>1.插入节点</bold>
+            <ul>
+                <li>插入头部节点,复杂度为O(1)。</li>
+                <li>插入中间节点,复杂度为O(n),。</li>
+                <li>插入尾部节点，如果有尾指针，插入尾部节点复杂度为O(1), 如果没有则需要遍历为O(n)。</li>
+                <li>如果位置已知，无论插入到哪里都是O(1)。</li>
+            </ul>
+            <bold>2.删除节点</bold>
+            <ul>
+                <li>删除头部节点, 复杂度为O(1)。</li>
+                <li>删除中间节点, 复杂度为O(n)。</li>
+                <li>删除尾部节点, 如果没有尾指针，删除尾部节点复杂度为O(n)。
+                    <br>如果有尾指针，当为单向链表时，即使有尾指针，单向链表需要找到倒数第二个节点，所以需要遍历，为O(n)，当为双向链表时，则为O(1)</li>
+                <li>如果位置已知，无论删除哪里都是O(1)。</li>
+            </ul>
+            <bold>3.查询节点</bold>
+            <ul>
+                <li>查找某个节点, 复杂度为O(n)。</li>
+            </ul>
+        </p>
+        <h2>链表和数组的区别</h2>
+        <p>
+            <table border="1" cellspacing="0" cellpadding="5">
+                <thead>
+                    <tr>
+                        <th>特性</th>
+                        <th>数组</th>
+                        <th>链表</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>内存布局</td>
+                        <td>连续内存，所有元素都存储在连续的内存地址中。
+                            <br>元素地址 = 基础地址 + 索引 * 元素大小。</td>
+                        <td>非连续内存，每个节点在内存中的位置是随机的
+                            <br>通过一个指针（或引用）连接到下一个节点。</td>
+                    </tr>
+                    <tr>
+                        <td>大小</td>
+                        <td>固定大小，声明时确定</td>
+                        <td>动态大小，可添加或删除节点</td>
+                    </tr>
+                    <tr>
+                        <td>访问方式</td>
+                        <td>由于元素之间的内存位置是已知的，只需要知道
+                            <br>元素的索引可以直接访问，时间复杂度 O(1)</td>
+                        <td>由于位置是随机的，所以访问一个节点需要从头
+                            <br>遍历去找，时间复杂度 O(n)</td>
+                    </tr>
+                    <tr>
+                        <td>插入/删除效率</td>
+                        <td>由于插入/删除操作都需要移动后续的元素，所以效率更低</td>
+                        <td>只需要调整指针，效率更高</td>
+                    </tr>
+                </tbody>
+            </table>
+        </p>
+        <h2>C#实现</h2>
+        <h3>单向链表</h3>
+        <p>
+            <pre><code>
+// 创建节点
+public class Node
+{
+    public int val; 
+    public Node next;
+    
+    public Node(int val = 0, Node next = null)
+    {
+        this.val = val;
+        this.next = next;
+    }
+}
+
+public class LinkedList
+{
+    private Node head;
+
+    // 插入到链表头部
+    public void InsertAtHead(int val)
+    {
+        Node newNode = new Node(val);
+        newNode.next = head;
+        head = newNode;
+    }
+
+    // 插入到尾部
+    public void InsertAtTail(int val)
+    {
+        Node newNode = new Node(val);
+        if (head == null)
+        {
+            head = newNode;
+            return;
+        }
+
+        Node current = head;
+        while (current.next != null)
+        {
+            current = current.next;
+        }
+        current.next = newNode;
+    }
+    
+    // 插入到中间
+    public void InsertAtPosition(int val, int position)
+    {
+        Node newNode = new Node(val);
+        if (position < 0)
+        {
+            return;
+        }
+
+        if (position == 0)
+        {
+            InsertAtHead(val);
+            return;
+        }
+        // 一定要写在position == 0 后面
+        if (head == null)
+        {
+            return;
+        }
+        
+        Node current = head;
+        for (int i = 0; i < position - 1; i++)
+        {
+            if (current == null)
+            {
+                return;
+            }
+            current = current.next;
+        }
+        
+        if (current == null)
+        {
+            return;
+        }
+
+        //只有双向链表需要判断 if (current.next == null)
+        newNode.next = current.next;
+        current.next = newNode;
+    }
+
+    // 删除节点
+    public void DeleteNode(int val)
+    {
+        if (head == null)
+        {
+            return;
+        }
+
+        if (head.val == val)
+        {
+            head = head.next;
+            return;
+        }
+
+        Node current = head;
+        Node previous = null;
+        while (current != null && current.val != val)
+        {
+            previous = current;
+            current = current.next;
+        }
+        if (current == null) return; // 没找到目标节点
+        previous.next = current.next; // 删除目标节点
+    }
+
+    public void Search(int val)
+    {
+        Node current = head;
+
+        while (current != null && current.val !=val)
+        {
+            current = current.next;
+        }
+        if (current != null)
+        {
+            Console.WriteLine("Found");
+        }
+        else
+        {
+            Console.WriteLine("Not found");
+        }
+    }
+
+    public void PrintList()
+    {
+        Node current = head;
+        while (current != null)
+        {
+            Console.Write(current.val + " -> ");
+            current = current.next;
+        }
+        Console.WriteLine("null");
+    }
+}
+
+//使用
+class Program
+{
+    static void Main(string[] args)
+    {
+        LinkedList list = new LinkedList();
+
+        // 插入
+        list.InsertAtHead(3);
+        list.InsertAtTail(4);
+        list.InsertAtPosition(5, 2);
+
+        list.PrintList(); // 输出: 3 -> 4 -> 5 -> null
+
+        // 删除节点
+        list.DeleteNode(3);
+        list.PrintList(); // 输出: 4 -> 5 -> null
+    }
+}
+</code></pre>
+        </p>
+
+        <h3>双向链表</h3>
+        <p>
+            <pre><code>
+public class DoublyNode
+{
+    public int val;
+    public DoublyNode next;
+    public DoublyNode prev;
+
+    public DoublyNode(int val = 0, DoublyNode next = null, DoublyNode prev = null)
+    {
+        this.val = val;
+        this.next = next;
+        this.prev = prev;
+    }
+}
+
+public class DoublyLinkedList
+{
+    private DoublyNode head;
+
+    //插入到链表头部
+    public void InsertAtHead(int val)
+    {
+        DoublyNode newNode = new DoublyNode(val);
+        if (head != null)
+        {
+            newNode.next = head;
+            head.prev = newNode;
+        }
+        head = newNode;
+    }
+
+    // 插入到尾部
+    public void InsertAtTail(int val)
+    {
+        DoublyNode newNode = new DoublyNode(val);
+        if (head == null)
+        {
+            head = newNode;
+            return;
+        }
+        
+        DoublyNode current = head;
+        
+        while (current.next != null)
+        {
+            current = current.next;
+        }
+        current.next = newNode;
+        newNode.prev = current;
+    }
+
+    // 插入到中间
+    public void InsertAtPosition(int val, int position)
+    {
+        DoublyNode newNode = new DoublyNode(val);
+        if (position < 0)
+        {
+            return;
+        }
+
+        if (position == 0)
+        {
+            InsertAtHead(val);
+            return;
+        }
+
+        if (head == null)
+        {
+            return;
+        }
+
+        DoublyNode current = head;
+        for (int i = 0; i < position - 1; i++)
+        {
+            if (current == null)
+            {
+                return;
+            }
+            current = current.next;
+        }
+        if (current == null)
+        {
+            return;
+        }
+        if (current.next == null)
+        {
+            InsertAtTail(val);
+        }
+        else
+        {
+            newNode.next = current.next;
+            newNode.prev = current;
+            current.next.prev = newNode;
+            current.next = newNode;
+        }
+    }
+
+    // 删除节点
+    public void DeleteNode(int val)
+    {
+        if (head == null)
+        {
+            return;
+        }
+
+        // 删除头节点
+        if (head.val == val)
+        {
+            if (head.next == null)
+            {
+                head = null;
+            }
+            else
+            {
+                head = head.next;
+                head.prev = null;
+            }
+            return;
+        }
+
+        DoublyNode current = head;
+        while (current != null)
+        {
+            if (current.val == val)
+            {
+                if (current.next == null)
+                {
+                    current.prev.next = null;
+                }   
+                else
+                {
+                    current.prev.next = current.next;
+                    current.next.prev = current.prev;
+                }
+                return;
+            }
+            current = current.next;
+        }
+        if (current == null) return;
+    }
+
+    // 反向打印
+    public void PrintReverseList()
+    {
+        if (head == null) return;
+
+        DoublyNode current = head;
+        while (current.next != null)
+        {
+            current = current.next;
+        }
+
+        while (current != null)
+        {
+            Console.Write(current.val + " -> ");
+            current = current.prev;
+        }
+        Console.WriteLine("null");
+    }
+}
+            </code></pre>
+        </p>
+        
+        <h3>循环链表</h3>
+        <p>
+            <pre><code>
+public class CircularNode
+{
+    public int val;
+    public CircularNode next;
+
+    public CircularNode(int val = 0, CircularNode next = null)
+    {
+        this.val = val;
+        this.next = next;
+    }
+}
+
+public class CircularLinkedList
+{
+    private CircularNode head;
+
+    public void InsertAtHead(int val)
+    {
+        CircularNode newNode = new CircularNode(val);
+
+        if (head == null)
+        {
+            head = newNode;
+            head.next = head;
+            return;
+        }
+        CircularNode current = head;
+        while (current.next != head)
+        {
+            current = current.next;
+        }
+        newNode.next = head;
+        head = newNode;
+        current.next = head;
+    }
+
+    public void InsertAtTail(int val)
+    {
+        CircularNode newNode = new CircularNode(val);
+        if (head == null)
+        {
+            head = newNode;
+            head.next = head;
+            return;
+        }
+
+        CircularNode current = head;
+        while (current.next != head)
+        {
+            current = current.next;
+        }
+        current.next = newNode;
+        newNode.next = head;
+    }
+
+    public void InsertAtPosition(int val, int position)
+    {
+        CircularNode newNode = new CircularNode(val);
+
+        if (position < 0 )
+        {
+            return;
+        }
+
+        if (position == 0)
+        {
+            InsertAtHead(val);
+            return;
+        }
+        
+        if (head == null)
+        {
+            return;
+        }
+
+        CircularNode current = head;
+        for (int i = 0; i < position - 1; i++)
+        {
+            current = current.next;
+            // 和上面的不一样，必须放在current = current.next的下面，因为要避免直接return;
+            if (current == head )
+            {
+                return;
+            }
+        }
+
+        newNode.next = current.next;
+        current.next = newNode;
+    }
+
+    public void DeleteNode(int val)
+    {
+        if (head == null)
+        {
+            return;
+        }
+        
+        //删除头节点
+        if (head.val == val)
+        {
+            if (head.next == head)
+            {
+                head = null;
+            }
+            else
+            {
+                CircularNode tail = head;
+                while (tail.next != head)
+                {
+                    tail = tail.next;
+                }
+                head = head.next;
+                tail.next = head;
+            }
+            return;
+        }
+        // 删除中间节点
+        CircularNode current = head;
+        CircularNode previous = null;
+        while (current.next != head)
+        {
+            previous = current;
+            current = current.next;
+
+            if (current.val == val)
+            {
+                if (current.next == head)
+                {
+                    previous.next = head;
+                }
+                else
+                {
+                    previous.next = current.next;
+                }
+                return;
+            }
+        }
+    }
+}
+            </code></pre>
+        </p>
+
+        <h3>C#自带链表</h3>
+        <p>
+            <pre><code>
+LinkedList&lt;int&gt; list = new LinkedList&lt;int&gt;();
+list.AddFirst(10); // 10
+list.AddLast(20); // 10 -> 20
+LinkedListNode&lt;int&gt; node = list.Find(20); // 获取包含20的节点
+list.AddBefore(node, 15); // 10 -> 15 -> 20
+list.AddAfter(LinkedListNode&lt;T&gt; node, T value)：在指定节点之后插入一个新的节点。
+node = list.Find(15); // 获取包含15的节点
+list.AddAfter(node, 17); // 10 -> 15 -> 17 -> 20
+list.RemoveFirst(); // 移除10 -> 17 -> 20
+list.RemoveLast(); // 移除20 -> 17
+list.AddLast(25); // 添加元素25 -> 17 -> 25
+list.AddLast(17); // 添加重复元素17 -> 17 -> 25 -> 17
+list.Clear();
+            </code></pre>
+        </p>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="datastruct.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>图</h1>
+        <h2>定义</h2>
+        <p>
+            图是一个非线性数据结构。G = {V, E}.V是顶点的集合, E是边的集合。
+            <br>图可以分为以下几种:
+            <ul>
+                <li><bold>无向图:</bold>边没有方向。对于无向图，<bold>度</bold>是与顶点相连接的边的数量。</li>
+                <li><bold>有向图:</bold>边有方向。对于有向图, 分为入度和出度。<bold>入度</bold>指向该顶点的边的数量。<bold>出度</bold>是从该顶点指向其他顶点的边的数量。</li>
+                <li><bold>加权图:</bold>边上带有权值。</li>
+            </ul>
+            <img src="graphic2.png" width="180" height="130">
+            <img src="graphic1.png" width="180" height="130">
+
+            <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<bold>(a) 无向图</bold>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<bold>(b) 有向图</bold>
+        </p>
+        <h2>图的存储结构</h2>
+        <p>
+            <bold>1.邻接矩阵</bold>
+            <ul>
+                <li><bold>无向图:</bold>matrix[i][j]表示从顶点 i 到顶点 j 是否有边。如有边,值为1.否则为0. 无向图的邻接矩阵是对称的。</li>
+                <li><bold>有向图:</bold>与无向图一样,但是非对称</li>
+                <li><bold>加权图:</bold>matrix[i][j]的值为权值</li>
+            </ul>
+            <img src="graphic3.png" width="180" height="130">
+            <img src="graphic4.png" width="180" height="130">
+            <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<bold>(a) 无向图</bold>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<bold>(b) 有向图</bold>
+        </p>
+        <p>
+            <bold>2.邻接表</bold>
+            <ul>
+                <li>邻接表由顶点表和边表组成。</li>
+                <li><bold>无向图:</bold>存储空间O(|V| + 2|E|)</li>
+                <li><bold>有向图:</bold>存储空间O(|V| + |E|)。某顶点的出度就是其边表的个数。入度则是边表中指向该顶点的个数。</li>
+                <img src="graphic5.png" width="180" height="130">
+                <img src="graphic6.png" width="180" height="130">
+                <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<bold>(a) 无向图</bold>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<bold>(b) 有向图</bold>
+            </ul>
+        </p>
+        <h2>图的遍历算法</h2>
+        <p>
+            图的遍历主要有两种方式：广度优先遍历和深度优先遍历。
+            <br><bold>1.广度优先遍历 (BFS)</bold>
+            <ul>
+                <li><bold>实现方式：</bold>从一个未访问的顶点开始，沿着一条路走到底，然后从尽头的节点退回到上一个节点，再从另一条路走到底。不断递归此过程。</li>
+                <li><bold>时间复杂度:</bold>O(V + E)</li>
+                <li><bold>空间复杂度:</bold>O(V)</li>
+            </ul>
+
+            <br><bold>2.深度优先遍历 (DFS)</bold>
+            <ul>
+                <li><bold>实现方式：</bold>从起始节点开始，逐层递归所有的邻接节点。然后再从邻接节点开始，逐层递归其所有的邻接节点。</li>
+                <li><bold>时间复杂度:</bold>O(V + E)</li>
+                <li><bold>空间复杂度:</bold>O(V)</li>
+            </ul>
+        </p>
+        <h2>代码实现</h2>
+        <p>
+            <pre><code>
+Using System;
+Using System.Collections.Generic;
+
+public class Graph
+{
+    private int num; // 顶点数量
+    private int[,] graph; // 邻接矩阵
+    private bool[] visited; //标记已访问数组
+
+    public Graph(int num, int[,] graph)
+    {
+        this.num = num;
+        this.graph = graph;
+        visited = new bool[num];
+    }
+
+    public void BFS(int root)
+    {
+        Queue&lt;int&gt; queue = new Queue&lt;int&gt;();
+
+        Visit(root); // 这里的Visit方法可以是对节点进行任何操作；
+        visited[root] = true;
+        queue.Enqueue(root);
+
+        while (queue.Count > 0)
+        {
+            int v = queue.Dequeue();
+
+            for (int i = 0; i < num; i++)
+            {
+                if (graph(v, i) == 1 && !visited[i])
+                {
+                    Visit(i); 
+                    visited[i] = true;
+                    queue.Enqueue(i);
+                }
+            }
+        }
+    }
+
+    public void DFS(int root)
+    {
+        Visit(root);
+        visited[root] = ture;
+
+        for (int i = 0; i < num; i++)
+        {
+            if (graph[root, i] == 1 && !visited[i])
+            {
+                DFS(i);
+            }
+        }
+    }
+
+    public void Visit(int v)
+    {
+        Console.WriteLine($"Visited vertex: {v}");
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        int[,] graph = new int[,]
+        {
+            { 0, 1, 0, 0, 1 }, // 顶点 0 的邻接情况
+            { 1, 0, 1, 1, 0 }, // 顶点 1 的邻接情况
+            { 0, 1, 0, 1, 0 }, // 顶点 2 的邻接情况
+            { 0, 1, 1, 0, 1 }, // 顶点 3 的邻接情况
+            { 1, 0, 0, 1, 0 }  // 顶点 4 的邻接情况
+        };
+
+        int num = 5; // 顶点数量
+        Graph g = new Graph(num, graph);
+
+        g.BFS(0);
+        // g.DFS(O) 如要在一个代码里进行完BFS后进行DFS，需要重置访问状态，也就是让visited里的值都变回false;
+
+    }
+}
+            </code></pre>
+        </p>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>
