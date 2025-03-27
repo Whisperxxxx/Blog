@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C#中Dcitionary的底层逻辑</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="datastruct.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>C#中Dcitionary的底层逻辑</h1>
+        <p>
+            在C#中，Dictionary&lt;Tkey, Tvalue&gt; 主要基于哈希表实现它的底层结构包含两个重要数组：
+            <li><bold>buckets（桶数组）：</bold>存储哈希表的索引。</li>
+            <li><bold>entries（条目数组）：</bold>存储键值对（key, value, next）</li>
+            <pre><code>
+private int[] buckets; 
+private Entry[] entries; 
+
+// 其中Entry结构
+struct Entry
+{
+    public int hashCode;  // 哈希值
+    public int next;      // 链地址法的指针（处理哈希冲突）
+    public TKey key;      // 键
+    public TValue value;  // 值
+}
+            </code></pre>
+        </p>
+
+        <h2>Add操作</h2>
+        <p>
+            假设插入dict["Alice"] = 25;
+            <br>
+            <bold>1. 计算哈希值</bold>
+            <br>首先, Dictionary会计算“Alice”的哈希值
+            <pre><code>
+hashCode = "Alice".GetHashCode(); // 假设结果为123456
+            </code></pre>
+            <br><bold>2. 计算桶索引</bold>
+            <br>然后计算数据要存放的桶的位置，这里数据会存放在bucket[6]
+            <pre><code>
+bucketIndex = hashCode % buckets.Length; // 假设 buckets.Length = 10, bucketIndex = 123456 % 10 = 6
+            </code></pre>
+            <br><bold>3. 检查桶是否冲突</bold>
+            <li>如果 buckets[6] 是 -1：意味着该位置没有数据，可以存储。</li>
+            <li>如果 buckets[6] 已经有数据, 则需要解决哈希冲突。</li>
+            <br><bold>4. 存储数据</bold>
+            <br>插入Alice -> 25到entries[0]中
+            <pre><code>
+entries[0] = new Entry { key = "Alice", value = 25, hashCode = 123456, next = -1 };
+            </code></pre>
+            <br><bold>5. 更新桶</bold>
+            <br>buckets[6]此时指向entries[0]（即buckets[6] = 0）;
+            <br>
+            <br><bold>6. 结果</bold>
+            <br>此时, buckets[6] = 0, 意思是指向entries[0]
+            <br>entires[0] 存储了key = "Alice", value = 25, next = -1（没有冲突，所以 next 是 -1）
+            <br>
+            <br><bold>7. 哈希冲突</bold>
+            <br>假如插入dict["Bob"] = 30;
+            <br>Bob 的哈希值也映射到 buckets[6]。
+            <br>entries[1] 存储 Bob -> 30，并将它的next链接到 entries[0]。
+            <pre><code>
+ entries[1] = new Entry { key = "Bob", value = 30, hashCode = 654321, next = 0 };  // next = 0，指向 Alice
+            </code></pre>
+            buckets[6] 更新为 1，指向 entries[1]，即 Bob 的数据。
+            <br>此时，buckets[6] = 1, 而entries[1] 通过next指向entires[0]; 
+        </p>
+
+        <h2>查找操作</h2>
+        <p>
+            假设查找dict.TryGetValue("Alice", out int value);
+            <br>
+            前2个步骤和上述Add操作一样，假设找到要查询的元素"Alice"对应的桶索引为6.
+            <br>
+            <br><bold>3. 检查buckets[6]</bold>
+            <br> 我们查看buckets[6]指向entries[1]。
+            <br>
+            <br><bold>4. 遍历链表</bold>
+            <br>遍历整个链表，直到找到对应元素。在entries[1]时，发现键为“Bob", 则查看指针next,指向entries[0], 继续遍历，得到key = "Alice"。此时我们找到了对应的键，返回它的值entries[0].value = 30.
+        </p>
+        
+        <h2>Remove删除</h2>
+        <p>
+            删除操作则和上面查找操作类似，当查找到要删除的元素时，删除元素，然后调整前一个链表的next即可。
+        </p>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>

@@ -54,111 +54,124 @@ public class TreeNode
 
 public class BinarySearchTree
 {
+    private TreeNode root; // 将 root 作为成员变量
+
     // 递归查找
-    public TreeNode RecSearch(TreeNode root, int target)
+    public TreeNode RecSearch(TreeNode node, int target)
     {
-        if (root == null || root.val == target)
+        if (node == null || node.val == target)
         {
-            return root;
+            return node;
         }
 
-        if (target < root.val)
+        if (target < node.val)
         {
-            return RecSearch(root.left, target);
+            return RecSearch(node.left, target);
         }
-        return RecSearch(root.right, target);
+        return RecSearch(node.right, target);
     }
+
     // 迭代查找
-    public TreeNode ItrSearch(TreeNode root, int target)
+    public TreeNode ItrSearch(TreeNode node, int target)
     {
-        while (root != null)
+        while (node != null)
         {
-            if (root.val == target)
+            if (node.val == target)
             {
-                return root;
+                return node;
             }
 
-            root = target < root.val ? root.left :root.right;
+            node = target < node.val ? node.left : node.right;
         }
 
         return null;
     }
 
     // 查找最小 时间复杂度O(h) 
-    public TreeNode FindMin(TreeNode root)
+    public TreeNode FindMin(TreeNode node)
     {
-        if (root == null) return null;
-        while (root.left != null)
+        if (node == null) return null;
+        while (node.left != null)
         {
-            root = root.left;
+            node = node.left;
         }
-        return root;
+        return node;
     }
 
     // 查找最大
-    public TreeNode FindMax(TreeNode root)
+    public TreeNode FindMax(TreeNode node)
     {
-        if (root == null) return null;
-        while (root.right != null)
+        if (node == null) return null;
+        while (node.right != null)
         {
-            root = root.right;
+            node = node.right;
         }
-        return root;
+        return node;
     }
 
     // 插入
-    public TreeNode Insert(TreeNode root, int val)
+    public void Insert(int val)
     {
-        TreeNode newNode = new TreeNode(val);
-        if (root == null) return newNode;
+        root = Insert(root, val);
+    }
 
-        if (val < root.val)
+    private TreeNode Insert(TreeNode node, int val)
+    {
+        if (node == null) return new TreeNode(val);
+
+        if (val < node.val)
         {
-            root.left = Insert(root.left, val);
+            node.left = Insert(node.left, val);
+        }
+        else if (val > node.val)
+        {
+            node.right = Insert(node.right, val);
         }
         else
-        {
-            root.right = Insert(root.right, val);
-        }
-        return root;
+            return node;
     }
 
     // 删除
-    public TreeNode Delete(TreeNode root, int val)
+    public void Delete(int val)
     {
-        if (root == null) return null;
+        root = Delete(root, val);
+    }
 
-        if (val < root.val)
+    private TreeNode Delete(TreeNode node, int val)
+    {
+        if (node == null) return null;
+
+        if (val < node.val)
         {
-            root.left = Delete(root.left, val);
+            node.left = Delete(node.left, val);
         }
-        else if (val > root.val)
+        else if (val > node.val)
         {
-            root.right = Delete(root.right, val);
+            node.right = Delete(node.right, val);
         }
         else
         {
             // 叶节点, 即无子节点
-            if (root.left == null && root.right == null)
+            if (node.left == null && node.right == null)
             {
                 return null;
             }
             // 只有一个子节点
-            else if (root.left == null)
+            else if (node.left == null)
             {
-                return root.right;
+                return node.right;
             }
-            else if (root.right == null)
+            else if (node.right == null)
             {
-                return root.left;
+                return node.left;
             }
             // 有两个子节点
             // 找到中序后继 (中序前继就是换成FindMax(left))
-            TreeNode temp = FindMin(root.right);
-            root.val = temp.val;
-            root.right = Delete(root.right, temp.val);          
+            TreeNode temp = FindMin(node.right);
+            node.val = temp.val;
+            node.right = Delete(node.right, temp.val);
         }
-        return root;
+        return node;
     }
 }
             </code></pre>

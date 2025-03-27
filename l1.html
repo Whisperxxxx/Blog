@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C#的Span &lt;T&gt;</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="language.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Span &lt;T&gt;</h1>
+        <h2>定义</h2>
+        <p>在C#中，Span &lt;T&gt;是一个结构体, 它提供了一种高效、安全的方式来处理连续的内存块，可以用于数组、切片、栈分配的内存等，避免了不必要的内存分配和复制，提高了性能。</p>
+        <h2>特点</h2>
+        <p>
+            <li><bold>高性能：</bold>它是一个ref struct , 不会在堆上分配，只能存储在栈上。</li>
+            <li><bold>内存安全：</bold>它提供了对内存的安全访问，避免了直接使用指针可能带来的风险。</li>
+            <li><bold>无额外分配：</bold>不会造成 GC（垃圾回收）压力，适用于高性能场景。</li>
+        </p>
+        <h2>常见用途</h2>
+        <p>
+            <li>操作数组或数组的子集。</li>
+            <li>操作字符串或字符串的子串。</li>
+            <li>与非托管内存交互。</li>
+            <li>在高性能场景中避免不必要的内存分配。</li>
+        </p>
+        <h2>基本用法</h2>
+        <p>
+            <bold>1. 创建Span&lt;T&gt;</bold>
+            <pre><code>
+                // 从数组创建 Span
+                int[] array = { 1, 2, 3, 4, 5 };
+                Span&lt;int&gt; span = array.AsSpan();
+                
+                // 从字符串创建 ReadOnlySpan&lt;char&gt;
+                string text = "Hello, World!";
+                ReadOnlySpan&lt;char&gt; textSpan = text.AsSpan(); // 字符串在C#是不可变的，所以这里用只读
+                
+                // 从栈内存创建 Span
+                Span&lt;int&gt; stackSpan = stackalloc int[10]; // 栈上分配 10 个 int
+            </code></pre>
+        </p>
+        <p>
+            <bold>2. 访问和修改数据</bold>
+            <pre><code>
+                //Span&lt;T&gt;只是对数组的一个视图（View），不会复制数据，因此修改 Span&lt;T&gt;也会影响原始数组。
+                // 修改数据
+                span[0] = 10; // 将第一个元素改为 10
+                
+                // 访问数据
+                Console.WriteLine(span[0]); // 输出 10
+            </code></pre>
+        </p>
+        <p>
+            <bold>3. 切片操作</bold>
+            <pre><code>
+                Span&lt;int&gt; span = new int[] { 1, 2, 3, 4, 5 };
+                // 获取子集（从索引 1 开始，长度为 3）
+                Span&lt;int&gt; slice = span.Slice(1, 3);
+                
+                Console.WriteLine(slice[0]); // 输出 2
+                Console.WriteLine(slice[1]); // 输出 3
+            </code></pre>
+        </p>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>

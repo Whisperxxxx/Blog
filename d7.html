@@ -72,11 +72,11 @@ public class TreeNode
     public TreeNode left;
     public TreeNode right;
 
-    public TreeNode(int val)
+    public TreeNode(int val = 0, TreeNode left = null, TreeNode right = null)
     {
-        this val = val;
-        left = null;
-        right = null;
+        this.val = val;
+        this.left = left;
+        this.right = right;
     }
 }
 
@@ -93,17 +93,16 @@ public class BinaryTree
     }
 
     // 前序遍历 - 迭代
-    public void PreOrder(TreeNode root)
+    public IList&lt;int&gt; PreorderTraversal(TreeNode root) 
     {
-        if (root == null) return;
-
+        IList&lt;int&gt; result = new List&lt;int&gt;();
         Stack&lt;TreeNode&gt; stack = new Stack&lt;TreeNode&gt;();
-        stack.Push(root);
+        if (root != null) stack.Push(root);
 
         while (stack.Count > 0)
         {
             TreeNode node = stack.Pop();
-            Console.Write(node.val + "");
+            result.Add(node.val);
 
             // 注意：先将右节点压入栈中，再将左节点压入栈中
             if (node.right != null)
@@ -115,6 +114,7 @@ public class BinaryTree
                 stack.Push(node.left);
             }
         }
+        return result;
     }
 
     // 中序遍历 - 递归
@@ -128,9 +128,11 @@ public class BinaryTree
     }
 
     // 中序遍历 - 迭代
-    public void InOrder(TreeNode root)
+    public IList&lt;int&gt; InorderTraversal(TreeNode root) 
     {
         Stack&lt;TreeNode&gt; stack = new Stack&lt;TreeNode&gt();
+        IList&lt;int&gt; result = new List&lt;int&gt;();
+
         TreeNode current = root;
 
         while (current != null || stack.Count > 0)
@@ -144,11 +146,12 @@ public class BinaryTree
 
             // 访问当前节点
             current = stack.Pop();
-            Console.Write(current.val + " ");
+            result.Add(current.val);
 
             // 访问右子树
             current = current.right;
         }
+        return result;
     }
 
     // 后序遍历 - 递归
@@ -162,49 +165,62 @@ public class BinaryTree
     }
 
     // 后序遍历 - 迭代
-    public void PostOrder(TreeNode root)
+    public IList&lt;int&gt; PostorderTraversal(TreeNode root)
     {
-        if (root == null) return;
-        Stack&lt;TreeNode&gt; stack1 = new Stack&lt;TreeNode&gt;();
-        Stack&lt;TreeNode&gt; stack2 = new Stack&lt;TreeNode&gt;();
-        stack1.Push(root);
+        IList&lt;int&gt; result = new List&lt;int&gt;();
+        Stack&lt;TreeNode&gt; stack = new Stack&lt;TreeNode&gt;();
+        TreeNode prev = null;
+        TreeNode current = root;
 
-        while (stack1.Count > 0)
+        while (current != null || stack.Count > 0)
         {
-            TreeNode node = stack1.Pop();
-            stack2.Push(node);
-            
-            if (node.left != null)
-                stack1.Push(node.left);
-            if (node.right != null)
-                stack1.Push(node.right);
-        }
+            while (current != null)
+            {
+                stack.Push(current);
+                current = current.left;
+            }
 
-        while (stack2.Count > 0)
-        {
-            TreeNode current = stack2.Pop();
-            Console.Write(current.val + " ");
+            current = stack.Peek();
+
+            if (current.right == null || current.right == prev )
+            {
+                result.Add(current.val);
+                prev = current;
+                stack.Pop();
+                current = null;
+            }
+            else
+            {
+                current = current.right;
+            }
         }
+        return result;
     }
 
     // 层次遍历 - 队列
-    public void LevelOrder(TreeNode root)
-    {
-        if (root == null) return;
+    public IList&lt;IList&lt;int&gt;&gt; LevelOrder(TreeNode root) {
+        IList&lt;IList&lt;int&gt;&gt; result = new List&lt;IList&lt;int&gt;&gt;();
+        if (root == null) return result;
 
         Queue&lt;TreeNode&gt; queue = new Queue&lt;TreeNode&gt;();
         queue.Enqueue(root);
 
         while (queue.Count > 0)
         {
-            TreeNode node = queue.Dequeue();
-            Console.Write(node.val + " ");
+            int levelSize = queue.Count;
+            List&lt;int&gt; curLevel = new List&lt;int&gt; ();
 
-            if (node.left != null)
-                queue.Enqueue(node.left);
-            if (node.right != null)
-                queue.Enqueue(node.right);
+            for (int i = 0; i < levelSize; i++)
+            {
+                TreeNode node = queue.Dequeue();
+                curLevel.Add(node.val);
+
+                if (node.left != null) queue.Enqueue(node.left);
+                if (node.right != null) queue.Enqueue(node.right);
+            }
+            result.Add(curLevel);
         }
+        return result;
     }
 }
 

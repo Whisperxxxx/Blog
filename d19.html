@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>哈希表的应用</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="datastruct.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>哈希表的应用</h1>
+        <h2>两数之和</h2>
+        <p>
+            <pre><code>
+public class Solution {
+    public int[] TwoSum(int[] nums, int target) {
+        Dictionary&lt;int, int&gt; dict = new Dictionary&lt;int, int&gt;();
+
+        for (int i = 0; i < nums.Length; i++)
+        {
+            int diff = target - nums[i];
+
+            if (dict.ContainsKey(diff))
+            {
+                return new int[]{dict[diff], i};
+            }
+            
+            dict[nums[i]] = i;
+        }
+        return null;
+    }
+}
+            </code></pre>
+        </p>
+   <h2>字母异位词分组</h2>
+   <p>
+    <pre><code>
+public class Solution
+{
+    public IList&lt;IList&lt;string&gt;&gt; GroupAnagrams(string[] strs)
+    {
+        var dict = new Dictionary&lt;string, IList&lt;string&gt;&gt;();
+
+        foreach (var str in strs)
+        {
+            char[] charArray = str.ToCharArray();
+            Array.Sort(charArray);
+            string sorted = new string(charArray);
+
+            if (dict.ContainsKey(sorted))
+            {
+                dict[sorted].Add(str);
+            }
+            else
+            {
+                dict[sorted] = new List&lt;string&gt;{str};
+            }
+        }
+        return dict.Values.ToList();
+    }
+}
+    </code></pre>
+   </p>
+   <h2>最长连续序列</h2>
+   <p>
+    <pre><code>
+// 时间复杂度为 O(n)，空间复杂度为 O(n)，只更新左右边界的长度信息。
+class Solution
+{
+    public int LongestConsecutive(int[] nums)
+    {
+        Dictionary &lt;int, int&gt; dict = new Dictionary&lt;int, int&gt;();
+
+        int result = 0;
+        for (int i = 0; i < nums.Length; i++)
+        {
+        int num = nums[i];
+        if (!dict.ContainsKey(num))
+        {
+            dict.TryGetValue(num - 1, out var lLength);
+            dict.TryGetValue(num + 1, out var rLength);
+            var cLength = lLength + 1 + rLength;
+            dict[num] = cLength;
+            dict[num - lLength] = cLength; // 更新左边界
+            dict[num + rLength] = cLength; // 更新右边界
+            result = Math.Max(result, cLength);
+        }
+        }
+        return result;
+    }
+}
+    </code></pre>
+   </p>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>
