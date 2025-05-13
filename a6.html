@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>动态规划</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="algorithms.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>动态规划</h1>
+        <h2>定义</h2>
+        <p>
+            动态规划是一种用于解决<bold>最优化问题</bold>的算法思想。要用于有<bold>重叠子问题</bold> 和 <bold>最优子结构</bold> 的问题。它通过<bold>记录子问题的解</bold>，避免重复计算，从而提高效率。
+            <li>重叠子问题：相同的子问题会被重复计算多次。例如斐波那契数列，f(n) = f(n-1) + f(n-2)，f(n-1) 和 f(n-2) 会被多次计算。</li>
+            <li>最优子结构：问题的最优解可以通过子问题的最优解推导出来。如最短路径问题（Dijkstra 算法）</li>
+        </p>
+        <h2>基本步骤</h2>
+        <p>
+            <bold>1. 定义状态</bold>
+            <li>确定 dp[i] 表示的问题。</li>
+            <bold>2. 状态转移方程</bold>
+            <li>找到状态之间的关系，即如何从子问题的解推导出当前问题的解。</li>
+            <li>如dp[i] = dp[i-1] + dp[i-2]。</li>
+            <bold>3. 初始化</bold>
+            <li>给 dp[0], dp[1] 赋初值。</li>
+            <bold>4. 计算顺序</bold>
+            <li>通常是自底向上或自顶向下。</li>
+        </p>
+        <h2>实现方式</h2>
+        <p>
+            <bold>1. 自底向上</bold>
+            <pre><code>
+    public long fib(int n)
+    {
+        if (n <= 1) return n;
+        long[] dp = new long[n+1];
+        dp[0] = 0;
+        dp[1] = 1;
+
+        for (int i = 2; i <= n; i++)
+        {
+            dp[i] = dp[i - 1] + dp[i - 2]
+        }
+
+        return dp[n];
+    }           
+            </code></pre>
+        </p>
+        <p>
+            <bold>2. 自顶向下 </bold>
+            <pre><code>
+    Dictionary&lt;int, long&gt; memo = new Dictionary&lt;int, long&gt;(); // 记忆化存储已计算的斐波那契值
+
+    public long fib(int n)
+    {
+        if (n <= 1) return n; 
+
+        if (!memo.ContainsKey(n)) // 如果 memo 中没有计算过 n
+        {
+            memo[n] = fib(n - 1) + fib(n - 2); // 计算并存入 memo
+        }
+
+        return memo[n]; // 直接返回存储的值
+    }
+            </code></pre>
+        </p>
+
+        <h2>经典问题</h2>
+        <p>
+            <bold>Kadane算法</bold>
+            <p>
+                用于求最大子数组和问题。
+                时间复杂度O(n), 空间复杂度O(1)
+
+                <pre><code>
+public class Solution {
+    public int MaxSubArray(int[] nums) {
+        int curSum = nums[0];
+        int maxSum = nums[0];
+
+        for (int i = 1; i < nums.Length; i++)
+        {
+            curSum = Math.Max(nums[i], curSum + nums[i]);
+            maxSum = Math.Max(curSum, maxSum);
+        }
+
+        return maxSum;
+    }
+}
+                </code></pre>
+            </p>
+            
+            <bold>跳楼梯</bold>
+            <p>
+                时间复杂度O(n), 空间复杂度O(1)
+                <pre><code>
+public class Solution {
+    public int ClimbStairs(int n) {
+        if (n <= 2) return n;  // 直接返回结果：f(1)=1, f(2)=2
+        
+        int first = 1;  // 代表 f(1) = 1
+        int second = 2; // 代表 f(2) = 2
+        
+        for (int i = 3; i <= n; i++) {
+            int third = first + second; // 计算 f(i) = f(i-1) + f(i-2)
+            first = second;  // 更新 f(i-2) = 原来的 f(i-1)
+            second = third;  // 更新 f(i-1) = 刚计算的 f(i)
+        }
+        
+        return second; // 最终 second 存储的是 f(n)
+    }
+}
+                </code></pre>   
+            </p>
+            <bold>杨辉三角</bold>
+            <p>
+                时间复杂度O(n ^ 2), 空间复杂度O(n ^ 2)
+                <pre><code>
+public class Solution {
+    public IList&lt;IList&lt;int&gt;&gt; Generate(int numRows) {
+        var result = new List&lt;IList&lt;int&gt;&gt; (); 
+        
+        for (int i = 0; i < numRows; i++)
+        {
+            var row = new List&lt;int&gt;();
+            for (int j = 0; j <= i; j++)
+            {
+                if (j == 0 || j == i)
+                {
+                    row.Add(1);
+                }
+                else
+                {
+                    row.Add(result[i - 1][j - 1] + result[i - 1][j]);
+                }
+            }
+            result.Add(row);
+        }
+        return result;
+    }
+}  
+                </code></pre>
+            </p>
+            <bold>打家劫舍</bold>
+            <p>
+                时间复杂度O(n), 空间复杂度O(1)
+                <pre><code>
+public class Solution {
+    public int Rob(int[] nums) {
+        
+        if (nums == null || nums.Length == 0) return 0;
+
+        if (nums.Length == 1) return nums[0];
+
+        int prev2 = nums[0];
+        int prev1 = Math.Max(nums[0], nums[1]);
+
+        for (int i = 2; i < nums.Length; i++)
+        {
+            int current = Math.Max(nums[i] + prev2, prev1);
+            prev2 = prev1;
+            prev1 = current;
+        }
+        return prev1;
+    }
+}
+                </code></pre>
+            </p>
+            <bold>打家劫舍Ⅱ</bold>
+            <p>
+                时间复杂度O(n), 空间复杂度O(1)
+                <pre><code>
+public class Solution {
+    public int Rob(int[] nums) {
+        if (nums == null || nums.Length == 0) return 0;
+
+        if (nums.Length == 1) return nums[0];
+        return Math.Max(Rob2(nums, 0, nums.Length -2), Rob2(nums, 1, nums.Length -1));
+    }
+
+    private int Rob2(int[] nums, int start, int end)
+    {
+        if (start == end) return nums[start];
+        int prev2 = nums[start];
+        int prev1 = Math.Max(nums[start], nums[start + 1]);
+
+        for (int i = start + 2; i <= end; i++)
+        {
+            int current = Math.Max(nums[i] + prev2, prev1);
+            prev2 = prev1;
+            prev1 = current;
+        }
+        return prev1;
+    }
+}
+                </code></pre>
+            </p>
+            <bold>完全平方数</bold>
+            <p>
+                时间复杂度O(n√n), 空间复杂度O(n)
+                <pre><code>
+public class Solution {
+    public int NumSquares(int n) {
+        int[] dp = new int[n + 1];
+        dp[0] = 0;
+        for (int i = 1; i <= n; i++)
+        {
+            dp[i] = int.MaxValue;
+            for (int j = 1; j * j <= i; j++)
+            {
+                dp[i] = Math.Min(dp[i], dp[i - j * j] + 1);
+            }
+        }
+        return dp[n];
+    }
+}
+                </code></pre>
+            </p>
+            <bold>零钱兑换</bold>
+            <p>
+                时间复杂度O(n x m), 空间复杂度O(n)
+                <br>n为amount, m为coins.Length;
+                <pre><code>
+public class Solution {
+    public int CoinChange(int[] coins, int amount) {
+        int[] dp = new int[amount + 1];
+        dp[0] = 0;
+
+        for (int i = 1; i <= amount; i++)
+        {
+            dp[i] = amount + 1;
+            foreach(int coin in coins)
+            {
+                if (coin <= i)
+                {
+                    dp[i] = Math.Min(dp[i], dp[i - coin] + 1);
+                }
+            }
+        }
+        return dp[amount] > amount ? -1 : dp[amount];
+    }
+}
+                </code></pre>
+            </p>
+            <bold>单词拆分</bold>
+            <p>
+                时间复杂度O(n ^ 2), 空间复杂度为O(n)
+                <pre><code>
+public class Solution {
+    public bool WordBreak(string s, IList<string> wordDict) {
+        HashSet<string> words = new HashSet<string>(wordDict);
+        bool[] dp = new bool[s.Length + 1];
+        dp[0] = true;
+        for (int i = 1; i <=s.Length; i++)
+        {
+            for (int j = 0; j < i; j++ )
+            {
+                if (dp[j] && words.Contains(s.Substring(j, i - j)))
+                {
+                    dp[i] = true;
+                    break;
+                }
+            }
+        }
+        return dp[s.Length];
+    }
+}
+                </code></pre>
+            </p>
+
+            <bold>递增子序列 - DP版</bold>
+            <p>
+                时间复杂度O(n ^ 2), 空间复杂度O(n)
+                <pre><code>
+public class Solution {
+    public int LengthOfLIS(int[] nums) {
+        if (nums == null || nums.Length == 0) return 0;
+
+        int n = nums.Length;
+        int[] dp = new int[n];
+        int result = 1;
+
+        dp[0] = 1;
+
+        for (int i = 1; i < n; i++)
+        {
+            dp[i] = 1;
+            for (int j = 0; j < i; j++)
+            {
+                if (nums[j] < nums[i])
+                {
+                    dp[i] = Math.Max(dp[i], dp[j] + 1);
+                }
+            }
+            result = Math.Max(result, dp[i]);
+        }
+        return result;
+    }
+}
+                </code></pre>
+            </p>
+            <bold>递增子序列 - 二分查找版</bold>
+            <p>
+                时间复杂度O(n log n), 空间复杂度O(n)
+                <pre><code>
+public class Solution {
+    public int LengthOfLIS(int[] nums) {
+        int[] tails = new int[nums.Length];
+        int res = 0;
+
+        for (int i = 0; i < nums.Length; i++)
+        {
+            int left = 0, right = res;
+
+            while (left < right)
+            {
+                int mid = left + (right - left) / 2;
+                if (tails[mid] < nums[i])
+                {
+                    left = mid +1;
+                }
+                else
+                {
+                    right = mid;
+                }
+            }
+            tails[left] = nums[i];
+            if (left == res) res++;
+        }
+    return res;
+    }
+}
+                </code></pre>
+            </p>
+            <bold>打印递增子序列 - 二分查找版</bold>
+            <p>
+                时间复杂度O(n log n), 空间复杂度O(n)
+                <pre><code>
+public class Solution {
+    public List&lt;int&gt; LengthOfLIS(int[] nums) {
+        int[] tails = new int[nums.Length];
+        int res = 0;
+        int[] prev = new int[nums.Length]; // 记录前一个
+
+        for (int i = 0; i < nums.Length; i++)
+        {
+            int left = 0, right = res;
+
+            while (left < right)
+            {
+                int mid = left + (right - left) / 2;
+                if (nums[tails[mid]] < nums[i]) //因为这个版本tails存的是索引，所以要加nums
+                {
+                    left = mid +1;
+                }
+                else
+                {
+                    right = mid;
+                }
+            }
+            tails[left] = i; // 记录索引
+            prev[i] = left > 0 ? tails[left - 1]: -1; // 记录上一个
+
+            if (left == res) res++;
+        }
+
+        List&lt;int&gt; lis = new List&lt;int&gt;();
+        int k = tails[res - 1]; 
+        while (k >= 0)
+        {
+            lis.Add(nums[k]);
+            k = prev[k];
+        }
+        lis.Reverse();
+        return lis;
+    }
+}
+                </code></pre>
+            </p>
+            <bold>乘积最大子数组</bold>
+            <p>
+                时间复杂度O(n). 空间复杂度O(1).
+                <pre><code>
+public class Solution {
+    public int MaxProduct(int[] nums) {
+        int curMin = nums[0];
+        int curMax = nums[0];
+        int maxProduct = nums[0];
+
+        for (int i = 1; i < nums.Length; i++)
+        {
+            if (nums[i] < 0)
+
+            {
+                int temp = curMin;
+                curMin = curMax;
+                curMax = temp;
+            }
+
+            curMin = Math.Min(nums[i], nums[i] * curMin);
+            curMax = Math.Max(nums[i], nums[i] * curMax);
+            maxProduct = Math.Max(maxProduct, curMax);
+        }
+        return maxProduct;
+    }
+}                   
+                </code></pre>
+            </p>
+            <bold>分割等和子集</bold>
+            <p>
+                时间复杂度O(n * total), 空间复杂度O(total).
+                <pre><code>
+public class Solution {
+    public bool CanPartition(int[] nums) {
+        int total = 0;
+
+        for (int i = 0; i < nums.Length; i++)
+        {
+            total += nums[i];
+        }
+        if (total % 2 == 1) return false;
+        total /= 2;
+        
+        bool[] dp = new bool[total + 1];
+        dp[0] = true;
+
+        foreach(int num in nums)
+        {
+            for (int j = total; j >= num; j--)
+            {
+                dp[j] = dp[j] || dp[j - num];
+            }
+            if (dp[total]) return true;
+        }
+        return false;
+    }
+}
+                </code></pre>
+            </p>
+            <bold>最长有效括号</bold>
+            <p>
+                时间复杂度O(n), 空间复杂度O(n)
+                <pre><code>
+public class Solution {
+    public int LongestValidParentheses(string s) {
+        int[] dp = new int[s.Length];
+        int maxRes = 0;
+        for (int i = 1; i < s.Length; i++)
+        {
+            if (s[i] == ')')
+            {
+                if (s[i - 1] == '(')
+                {
+                    dp[i] = (i - 2 >= 0?  dp[i - 2] : 0) + 2;
+                }
+                else if (i - dp[i - 1] > 0 &&  s[i - dp[i - 1] - 1] == '(')
+                {
+                    dp[i] = dp[i - 1] + 2 + (i - dp[i - 1] - 2 >= 0 ? dp[i - dp[i - 1] - 2] : 0);
+                }
+                maxRes = Math.Max(maxRes, dp[i]);
+            }
+        }
+        return maxRes;
+    }
+}
+                </code></pre>
+            </p>
+            <bold>不同路径</bold>
+            <p>
+                时间复杂度O(m * n), 空间复杂度O(n)
+                <pre><code>
+public class Solution {
+    public int UniquePaths(int m, int n) {
+        int[] dp = new int[n];
+        
+        for (int j = 0; j < n; j++)
+        {
+            dp[j] = 1;
+        }
+
+        for (int i = 1; i < m; i++)
+        {
+            for (int j = 1; j < n; j++)
+            {
+                dp[j]+= dp[j - 1];
+            }
+        }
+        return dp[n - 1];
+    }
+}
+                </code></pre>
+            </p>
+            <bold>最小路径和</bold>
+            <p>
+                时间复杂度O(m * n), 空间复杂度O(n)
+                <pre><code>
+public class Solution {
+    public int MinPathSum(int[][] grid) {
+        int m = grid.Length;
+        int n = grid[0].Length;
+        int[] dp = new int[n];
+
+        dp[0] = grid[0][0];
+
+        for (int j = 1; j < n; j++)
+        {
+            dp[j] = dp[j - 1] + grid[0][j];
+        }
+
+        for (int i = 1; i < m; i++)
+        {
+            dp[0] += grid[i][0];
+            for (int j = 1; j < n; j++)
+            {
+                dp[j] = Math.Min(dp[j], dp[j -1]) + grid[i][j];
+            }
+        }
+        return dp[n - 1];
+    }
+}
+                </code></pre>
+            </p>
+            <bold>最长回文子串</bold>
+            <p>
+               时间复杂度O(n ^ 2), 空间复杂度O(1);
+                <pre><code>
+public class Solution {
+    public string LongestPalindrome(string s) {
+        int end = 0, start = 0;
+        for (int i = 0; i < s.Length; i++)
+        {
+            int len1 = Judge(s, i, i);
+            int len2 = Judge(s, i, i+1);
+
+            int len = Math.Max(len1, len2);
+
+            if (len > end - start)
+            {
+                start = i - (len - 1) /2;
+                end = i + len / 2;
+            }
+        }
+        return s.Substring(start, end - start + 1);
+    }
+
+    private int Judge(string s, int left, int right)
+    {
+        while (left >= 0 && right < s.Length && s[left] == s[right])
+        {
+            left--;
+            right++;
+        }
+        return right - left - 1;
+    }
+}
+                </code></pre>
+            </p>
+            <bold>最长公共子序列（LCS）</bold>
+            <p>
+                时间复杂度O(m * n), 空间复杂度O(n)
+                <pre><code>
+public class Solution {
+    public int LongestCommonSubsequence(string text1, string text2) {
+        int m = text1.Length, n = text2.Length;
+        int[] dp = new int[n + 1];
+        for (int i = 1; i <= m; i++)
+        {
+            int prev = 0;
+            for (int j = 1; j <= n; j++)
+            {
+                int temp = dp[j];
+                if (text1[i - 1] == text2[j - 1])
+                {
+                    dp[j] = prev + 1;
+                }
+                else
+                {
+                    dp[j] = Math.Max(dp[j], dp[j - 1]);
+                }
+                prev = temp;
+            }
+        }
+        return dp[n];
+    }
+}
+                </code></pre>
+            </p>
+            <bold>编辑距离</bold>
+            <p>
+                时间复杂度O(m * n), 空间复杂度O(n)
+                <pre><code>
+public class Solution {
+    public int MinDistance(string word1, string word2) {
+        int m = word1.Length, n = word2.Length;
+        int[] dp = new int[n + 1];
+
+        for (int j = 0; j <= n; j++)
+        {
+            dp[j] = j;
+        }
+
+        for (int i = 1; i <= m; i++)
+        {
+            int prev = dp[0];
+            dp[0] = i;
+            for (int j = 1; j <= n; j++)
+            {
+                int temp = dp[j];
+                if (word1[i - 1] == word2[j - 1])
+                {
+                    dp[j] = prev;
+                }
+                else
+                {
+                    dp[j] = Math.Min(Math.Min(dp[j], dp[j - 1]), prev) + 1;
+                }
+                prev = temp;
+            }
+        }
+        return dp[n];
+    }
+}
+                </code></pre>
+            </p>
+        </p>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>

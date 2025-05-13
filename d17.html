@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>哈希表</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="datastruct.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>哈希表</h1>
+        <h2>基本概念</h2>
+        <p>
+            <bold>1. 键值对（Key - Value）存储：</bold>通过键直接访问值。
+            <br><bold>2. 哈希函数（Hash Function）：</bold>将键映射到哈希表的特定位置（索引）。
+            <br>理想的哈希函数有以下特点：
+            <li>快速计算</li>
+            <li>均匀分布，尽量减少冲突</li>
+            <br><bold>3. 哈希表的性能：</bold>查找，插入，删除的评价时间复杂度为O(1)。在极端情况下（哈希冲突过多），时间复杂度可能退化为O(n)。
+        </p>
+
+        <h2>实现原理</h2>
+        <p>
+            <bold>1. 数组存储：</bold>哈希表中,<bold>桶（Bucket）</bold>是存储键值对的基本单元。桶的底层是一个数组，每个桶存储一个或多个键值对（具体取决于哈希冲突的处理方式）。
+            <br><bold>2. 哈希函数：</bold>根据键值算出数组的索引值。
+            <br><bold>3. 哈希冲突：</bold>不同的键通过哈希函数映射到相同的索引中，成为哈希冲突。
+            <br><bold>4. 动态扩容：</bold>当哈希表中的<bold>负载因子 (负载因子 = 已存储元素数 / 哈希桶总数)</bold> 超过阈值时，会动态扩展哈希表的大小，并重新分分配所有键值对。
+        </p>
+
+        <h2>哈希冲突</h2>
+        <p>
+            <p>
+                <bold>1. 链地址法（Separate Chaining）</bold>
+                <li>每个桶是一个链表, 冲突的元素添加到链表末尾。</li>
+                <li>优点：实现简单，适合存储大量数据。</li>
+                <li>缺点：需要额外空间存储链表指针，最坏情况下退化为O(n)</li>
+
+            </p>
+            <p>
+                <bold>2. 开放地址法（Open Addressing）</bold>
+                <li>当发生冲突时，通过探测方法（线性探测, 二次探测，双重哈希）寻找下一个空闲桶。</li>
+                <ul>
+                    <li><bold>线性探测：</bold>如果哈希值位置被占用，就检查下一个位置，直到找到空槽。</li>
+                    <li><bold>二次探测：</bold>与线性探测类似，但是探测步长按二次函数递增。</li>
+                    <li><bold>双重哈希：</bold>使用两个哈希函数，第一个哈希函数是计算元素的位置，第二个哈希函数计算冲突后的探测步长。</li>
+                </ul>
+                <li>优点：不需要额外空间</li>
+                <li>缺点：容易发生聚集现象</li>
+
+            </p>
+            <p><bold>3. 重哈希（Rehashing）</bold>
+                <li>当哈希表中的负载因子超过某个阈值时，哈希表容量加倍，同时重新计算所有元素的哈希值，并将它们插入到新的哈希表中。</li>
+            </p>
+        </p>
+        
+        <h2>基本操作</h2>
+        <p>
+            <table border="1" cellspacing="0" cellpadding="5">
+                <tr>
+                    <th>操作</th>
+                    <th>平均时间复杂度</th>
+                    <th>最坏情况</th>
+                </tr>
+                <tr>
+                    <td>插入（Insert）</td>
+                    <td>O(1)</td>
+                    <td>O(n)（哈希冲突严重时）</td>
+                </tr>
+                <tr>
+                    <td>删除（Delete）</td>
+                    <td>O(1)</td>
+                    <td>O(n)（哈希冲突严重时）</td>
+                </tr>
+                <tr>
+                    <td>查找（Search）</td>
+                    <td>O(1)</td>
+                    <td>O(n)（哈希冲突严重时）</td>
+                </tr>
+            </table>
+        </p>
+        <p>
+            <pre><code>
+using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        Dictionary&lt;string, int&gt; dict = new Dictionary&lt;string, int&gt;();
+
+        // 以下两种都为插入元素的方法，区别在于：
+        dict.Add("Alice", 15); // Add方法键是唯一的，如果键已存在则会抛出异常
+        dict["Alice"] = 25;     // 该方法如果键不存在则会直接插入，如果键存在，则会更新值。
+        dict["Bob"] = 30;
+
+        // 删除元素
+        dict.Remove("Bob");
+
+        // 查找元素
+        if (dict.ContainsKey("Alice"))
+        {
+            Console.WriteLine($"Alice: {dict["Alice"]}"); 
+        }
+        
+        // 第二个查找元素方法，区别在于该方法能返回查找值。
+        if (dict.TryGetValue("Alice", out int value))
+        {
+            Console.WriteLine($"Alice's value is {value}");
+        }
+        
+        // 遍历
+        foreach (var dkey in dict.Keys)
+        {
+            Console.WriteLine(dkey);
+        }
+
+        foreach (var dvalue in dict.Values)
+        {
+            Console.WriteLine(dvalue);
+        }
+
+        foreach (var kvp in dict)
+        {
+            Console.WriteLine($"{kvp.Key}: {kvp.Value}");
+        }
+    }
+}
+            </code></pre>
+        </p>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>

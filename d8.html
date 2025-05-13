@@ -34,7 +34,7 @@ public class TreeNode
     }
 }
 
-public class BinaryTree
+public class Solution
 {
     // 计算二叉树的最大深度（高度）
     public int MaxDepth(TreeNode root)
@@ -51,106 +51,65 @@ public class BinaryTree
 }
             </code></pre>                
         </p>
-        <h2>二叉树的对称</h2>
-        <p>
-            <pre><code>
-// TreeNode定义如上
 
-public class BinaryTree
-{
-    public bool IsSymmetric(TreeNode root)
-    {
-        if (root == null) return true;
-
-        return IsMirror(root.left, root.right);
-    }
-
-    public bool IsMirror(TreeNode left, TreeNode right)
-    {
-        if (left == null && right == null)
-        {
-            return true;
-        }
-
-        if (left == null || right == null)
-        {
-            return false;
-        }
-
-        if (left.val != right.val)
-        {
-            return false;
-        }
-
-        bool leftSubtree = IsMirror(left.left,right.right);
-        bool rightSubtree = IsMirror(left.right, right.left);
-        return leftSubtree && rightSubtree; 
-    }
-}
-
-            </code></pre>
-        </p>
         <h2>二叉树的翻转</h2>
         <p>
             <pre><code>
-// 递归法
-public class BinaryTree
+public class Solution
 {
     public TreeNode InvertTree(TreeNode root)
     {
         if (root == null) return null;
-
-        TreeNode temp = InvertTree(root.left);
-        root.left = InvertTree(root.right);
-        root.right = temp;
-
+        
+        // 递归翻转左右子树
+        TreeNode left = InvertTree(root.left);
+        TreeNode right = InvertTree(root.right);
+        
+        // 交换左右子树
+        root.left = right;
+        root.right = left;
+        
         return root;
     }
-
-    public void PreOrder(TreeNode root)
-    {
-        if (root == null) return;
-        Console.Write(root.val + " ");
-        PreOrder(root.left);
-        PreOrder(root.right);
-    }
-}
-
-//迭代法 (DFS)
-public TreeNode InvertTree(TreeNode root)
-{
-    if (root == null) return null;
-
-    Stack&lt;TreeNode&gt; stack = new Stack&lt;TreeNode&gt;();
-    stack.Push(root);
-
-    while (stack.Count > 0)
-    {
-        TreeNode node = stack.Pop();
-
-        TreeNode temp = node.left;
-        node.left = node.right;
-        node.right = temp;
-
-        if (node.left != null) stack.Push(node.left);
-        if (node.right != null) stack.Push(node.right);
-    }
-    return root;
 }
             </code></pre>
         </p>
+        <h2>二叉树的对称</h2>
+        <p>
+        <pre><code>
+public class Solution {
+    public bool IsSymmetric(TreeNode root) {
+        if (root == null) return true;
+        return IsMirror(root.left, root.right);
+    }
+
+    private bool IsMirror(TreeNode left, TreeNode right)
+    {
+        if (left == null && right == null) return true;
+
+        if (left == null || right == null) return false;
+
+        if (left.val != right.val) return false;
+
+        return IsMirror(left.left, right.right) && IsMirror(left.right, right.left);
+    }
+}
+        </code></pre>
+
+        </p>
+
         <h2>二叉树的直径</h2>
         <p>
             <pre><code>
-public class BinaryTree
+public class Solution
 {
-    private int maxDiameter = 0; // 初始化边数为0；
+    private int count = 0; // 初始化边数为0；
 
     public int CalDiameter(TreeNode root)
     {
         MaxDepth(root);
 
-        return maxDiameter;
+        return count;
     }
 
     public int MaxDepth(TreeNode root)
@@ -161,7 +120,7 @@ public class BinaryTree
         int rightDepth = MaxDepth(root.right);
 
         // 更新最大直径，左右子树的深度之和即为路径的边数
-        maxDiameter = Math.Max(maxDiameter, leftDepth + rightDepth);
+        count = Math.Max(count, leftDepth + rightDepth);
 
         return Math.Max(leftDepth, rightDepth) + 1;
     }
@@ -171,35 +130,45 @@ public class BinaryTree
         <h2>二叉树的路径和</h2>
         <p>
             <pre><code>
-// 暴力深度优先搜索（O(n^2)）
-public class BinaryTree
-{
-    public int PathSum(TreeNode root, int sum)
-    {
-        if (root == null) return 0;
+// 哈希表 + 前缀和
+public class Solution {
+    public int PathSum(TreeNode root, int target)
+   {
+       Dictionary&lt;long, int&gt;  prefix = new Dictionary&lt;long, int&gt; ();
+       prefix[0] = 1;
+       return dfs(root, target, prefix, 0);
+   }
 
-        return CountPath(root, sum) +
-                PathSum(root.left, sum) +
-                PathSum(root.right, sum);
-    }
+   private int dfs(TreeNode root,  int target, Dictionary&lt;long, int&gt;  prefix, long cur)
+   {
+       if (root == null) return 0;
 
-    private int CountPath(TreeNode root, int sum)
-    {
-        if (root == null) return 0;
-        int count = 0;
+       cur += root.val;
+       prefix.TryGetValue(cur - target, out int ret);
 
-        if (root.val == sum)
-        {
-            count++;
-        }
+       if (prefix.ContainsKey(cur))
+       {
+           prefix[cur]++;
+       }
+       else
+       {
+           prefix[cur] = 1;
+       }
 
-        // 递归检查左右子树中的路径
-        count += CountPath(root.left, sum - root.val);
-        count += CountPath(root.right, sum - root.val);
-        return count;
-    }
+       ret += dfs(root.left, target, prefix, cur);
+       ret += dfs(root.right, target, prefix, cur);
+
+       if (prefix[cur] == 1)
+       {
+        prefix.Remove(cur);
+       }
+       else
+       {
+        prefix[cur]--;
+       }
+       return ret;
+   }
 }
-// 哈希表
 
             </code></pre>
         </p>

@@ -124,75 +124,6 @@ int[,,] array3D = {
 int value = array3D[0, 1, 2]; // 访问第1层第2行第3列的元素，值为7
             </code></pre>
         </p>
-        <p>
-            <h3>在Java中：</h3>
-            <pre><code>
-// 一维数组
-int[] array1D = new int[2]; // 定义一个包含2个元素的一维数组
-int[] array1D = {1, 2}; // 初始化
-int value = array1D[0]; // 访问第一个元素
-
-//二维数组
-int[][] array2D = new int[3][4]; // 定义一个3行4列的二维数组
-int[][] array2D = {
-    {1, 2, 3, 4},
-    {5, 6, 7, 8},
-    {9, 10, 11, 12}
-}; // 初始化
-int value = array2D[1][2]; // 访问第二行第三列的值
-
-//三维数组及以上
-int[][][] array3D = new int[2][3][4]; // 定义一个2层3行4列的三维数组
-int[][][] array3D = {
-    {
-        { 1, 2, 3, 4 },
-        { 5, 6, 7, 8 },
-        { 9, 10, 11, 12 }
-    },
-    {
-        { 13, 14, 15, 16 },
-        { 17, 18, 19, 20 },
-        { 21, 22, 23, 24 }
-    }
-};
-int value = array3D[0][1][2]; // 获取第1层第2行第3列的值
-            </code></pre>
-        </p>
-        
-        <p>
-            <h3>在C++中：</h3>
-            <pre><code>
-// 一维数组
-int array1D[2]; // 定义一个大小为2的一维数组
-int array1D[] = {1, 2}; // 初始化
-int value = array1D[0]; // 访问第一个元素
-
-// 二维数组
-int array2D[3][4]; // 定义一个3行4列的二维数组
-int array2D[3][4] = {
-    {1, 2, 3, 4},
-    {5, 6, 7, 8},
-    {9, 10, 11, 12}
-}; // 初始化
-int value = array2D[1][2]; // 获取第二行第三列的值
-
-// 三维数组及以上
-int array3D[2][3][4]; // 定义一个2层3行4列的三维数组
-int[2][3][4] = {
-    {
-        { 1, 2, 3, 4 },
-        { 5, 6, 7, 8 },
-        { 9, 10, 11, 12 }
-    },
-    {
-        { 13, 14, 15, 16 },
-        { 17, 18, 19, 20 },
-        { 21, 22, 23, 24 }
-    }
-};
-int value = array3D[0][1][2]; // 获取第1层第2行第3列的值（值为7）
-            </code></pre>
-        </p>
         <h3>C#动态数组</h3>
         <p>
             <pre><code>
@@ -201,7 +132,6 @@ numbers.Add(10);  // 列表变为 [10]
 numbers.Add(20);  // 列表变为 [10, 20]
 numbers.Add(30);  // 列表变为 [10, 20, 30]
 int firstElement = numbers[0];  // 获取索引0的元素，结果为 10
-int secondElement = numbers[1]; // 获取索引1的元素，结果为 20
 numbers.Remove(20);     // 删除值为20的元素，列表变为 [10, 30]
 numbers.RemoveAt(0);    // 删除索引为0的元素，列表变为 [30]
 int count = numbers.Count;     // 返回元素个数，比如列表为 [10, 20, 30] 时，count 为 3
@@ -220,47 +150,19 @@ numbers.Clear();  // 清空列表，列表内容变为空 []
         <h3>反转字符串</h3>
         <p>
             <pre><code>
-Using System;
+public class Solution {
+    public void ReverseString(char[] s) {
+        // 假如给的是string, 则char[] s = input.ToCharArray();
 
-public class StringReverser
-{
-    public string Reverse(string input)
-    {
-        // 将字符串转换为字符数组
-        char[] arr = input.ToCharArray();
-
-        int left = 0;
-        int right = arr.Length - 1;
-
+        int left = 0, right = s.Length - 1;
         while (left < right)
         {
-            // 交换左右指针指向的字符
-            char temp = arr[left];
-            arr[left] = arr[right];
-            arr[right] = temp;
-
-            // 移动指针
+            char temp = s[left];
+            s[left] = s[right];
+            s[right] = temp;
             left++;
             right--;
         }
-
-        return new string(arr);
-
-    }
-}
-
-class Program
-{
-    static void Main()
-    {
-        // 创建 StringReverser 类的实例
-        StringReverser reverser = new StringReverser();
-        
-        string original = "Hello, World!";
-        string reversed = reverser.Reverse(original);
-        
-        Console.WriteLine("Original: " + original);
-        Console.WriteLine("Reversed: " + reversed);
     }
 }
             </code></pre>

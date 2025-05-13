@@ -42,7 +42,7 @@
         <pre><code>
 public class Heap
 {
-    private List<int> heap;
+    private List&lt;int&gt; heap;
 
     public Heap()
     {
@@ -52,15 +52,21 @@ public class Heap
     // 上浮
     public void Swim(List&lt;int&gt; heap, int index)
     {
-        int parent = (index - 1) / 2;
-        while (index > 0 && heap[index] > heap[parent])
+        while (index > 0)
         {
-            int temp = heap[index];
-            heap[index] = heap[parent];
-            heap[parent] = temp;
-
-            index = parent;
-            parent = (index - 1) / 2;
+            int parent = (index - 1) / 2;
+            if (heap[index] > heap[parent])
+            {
+                int temp = heap[index];
+                heap[index] = heap[parent];
+                heap[parent] = temp;
+    
+                index = parent;
+            }
+            else
+            {
+                break;
+            }
         }
     }
     

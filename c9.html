@@ -22,7 +22,7 @@
         <h2>TCP的状态转换</h2>
         <P><bold>客户端：</bold>CLOSED -> SYN SENT -> ESTABLISHED -> FIN_WAIT_1 -> FIN_WAIT_2 -> TIME_WAIT -> CLOSED</P>
         <p><bold>服务器：</bold>CLOSED -> LISTEN -> SYN RECEIVED -> ESTABLISHED -> CLOSE_WAIT -> LAST_ACK -> CLOSED</p>
-        <br><img src="TCP.png" width="500" height="500">
+        <br><img src="image/TCP.png" width="500" height="500">
         <p>LISTEN - 侦听来自远方TCP端口的连接请求； 
             <br>SYN-SENT -在发送连接请求后等待匹配的连接请求； 
             <br>SYN-RECEIVED - 在收到和发送一个连接请求后等待对连接请求的确认； 
@@ -35,8 +35,8 @@
             <br>TIME-WAIT -等待足够的时间以确保远程TCP接收到连接中断请求的确认； 
             <br>CLOSED - 没有任何连接状态；</p>
         <h2>三次握手（建立连接）</h2>
-        <p><bold>（1）第一次握手（SYN）：</bold>建立连接时，客户端A发送SYN包（SYN=j）到服务器B，并进入SYN_SEND状态，等待服务器B确认。
-        <br><bold>（2）第二次握手（SYN+ACK）：</bold>服务器B收到SYN包，必须确认客户A的SYN（ACK=j+1），同时自己也发送一个SYN包（SYN=k），即SYN+ACK包，此时服务器B进入SYN_RECV状态。
+        <p><bold>（1）第一次握手（SYN）：</bold>建立连接时，客户端A发送SYN包（SYN=j）到服务器B，并进入SYN_SENT状态，等待服务器B确认。
+        <br><bold>（2）第二次握手（SYN+ACK）：</bold>服务器B收到SYN包，必须确认客户A的SYN（ACK=j+1），同时自己也发送一个SYN包（SYN=k），即SYN+ACK包，此时服务器B进入SYN_RCVD状态。
         <br><bold>（3）第三次握手（ACK）：</bold>客户端A收到服务器B的SYN＋ACK包，向服务器B发送确认包ACK（ACK=k+1），此包发送完毕，客户端A和服务器B进入ESTABLISHED状态，完成三次握手。
         </p>
         <h2>四次挥手（断开连接）</h2>

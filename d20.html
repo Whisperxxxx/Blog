@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVL树</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="datastruct.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>AVL树</h1>
+        <h2>平衡树的定义</h2>
+        <p>平衡树是一种自平衡的二叉搜索树，确保树的高度保持在O(log n)级别，以保证查找、插入和删除操作的高效性。</p>
+        <h2>目的</h2>
+        <p>
+            避免普通二叉搜索树在极端情况下退化为链表，导致操作时间复杂度上升至O(n)。
+        </p>
+        <h2>AVL树的定义</h2>
+        <p>
+            AVL树是一种二叉搜索树，每个节点的左右子树高度，即平衡因子的绝对值（平衡因子 = 左子树的高度 - 右子树的高度））不超过1。
+        </p>
+        <h2>AVL树的基本操作</h2>
+        <bold>1. 节点定义</bold>
+        <p>
+            <pre><code>
+public class TreeNode
+{
+    public int val;
+    public TreeNode left;
+    public TreeNode right;
+    public int height;
+
+    public TreeNode(int val = 0, TreeNode left = null, TreeNode right = null)
+    {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+        this.height = 1;
+    }
+}
+            </code></pre>
+        </p>
+        <bold>2. 查找操作</bold>
+        <p>
+            <li>查找操作与普通的二叉搜索树完全一样。</li>
+            <li>时间复杂度：O(log n)</li>
+            <pre><code>
+public class AVLTree
+{
+
+    private TreeNode root; // 将 root 作为成员变量
+
+    // 递归查找
+    public TreeNode RecSearch(TreeNode node, int target)
+    {
+        if (node == null || node.val == target)
+        {
+            return node;
+        }
+
+        if (target < node.val)
+        {
+            return RecSearch(node.left, target);
+        }
+        return RecSearch(node.right, target);
+    }
+
+    // 迭代查找
+    public TreeNode ItrSearch(TreeNode node, int target)
+    {
+        while (node != null)
+        {
+            if (node.val == target)
+            {
+                return node;
+            }
+
+            node = target < node.val ? node.left : node.right;
+        }
+
+        return null;
+    }
+
+    // 查找最小 时间复杂度O(h) 
+    public TreeNode FindMin(TreeNode node)
+    {
+        if (node == null) return null;
+        while (node.left != null)
+        {
+            node = node.left;
+        }
+        return node;
+    }
+
+    // 查找最大
+    public TreeNode FindMax(TreeNode node)
+    {
+        if (node == null) return null;
+        while (node.right != null)
+        {
+            node = node.right;
+        }
+        return node;
+    }
+}
+            </code></pre>
+        </p>
+        <bold>3. 插入操作</bold>
+        <p>
+            <li>和二叉搜索树一样插入新节点</li>
+            <li>从插入节点的父节点开始，向上检查每个祖先的平衡因子，如果平衡因子超过1，则进行旋转操作恢复。</li>
+        </p>
+        <p>
+            <bold>旋转操作分为四种：</bold>
+            <li><bold>右旋：</bold>失衡节点向右旋转（即原左孩子变为父节点），冲突的右孩变左孩</li>
+            <li><bold>左旋：</bold>失衡节点向左旋转（即原右孩子变为父节点），冲突的左孩变右孩</li>
+            <li><bold>左右旋：</bold>先对左孩子进行左旋，再对失衡节点进行右旋。</li>
+            <li><bold>右左旋：</bold>先对右孩子进行右旋，再对失衡节点进行左旋。</li>
+        </p>
+        <p>
+            <bold>对应的，插入后的情况也分为四种：</bold>
+            <li><bold>左左情况（LL）：</bold>插入节点在左子树的左子树中，则使用右旋。</li>
+            <li><bold>右右情况（RR）：</bold>插入节点在右子树的右子树中，则使用左旋。</li>
+            <li><bold>左右情况（LR）：</bold>插入节点在左子树的右子树中，则使用左右旋。</li>
+            <li><bold>右左情况（RL）：</bold>插入节点在右子树的左子树中，则使用右左旋。</li>
+        </p>
+        <pre><code>
+pubic class AVLTree
+{
+    // 计算节点高度
+    private int Height(TreeNode node)
+    {
+        if (node == null) return 0;
+        return node.height;
+    }
+
+    // 计算平衡因子
+    private int GetBalance(TreeNode node)
+    {
+        if (node == null) return 0;
+        return Height(node.left) - Height(node.right);
+    }
+
+    // 右旋：失衡节点向右旋转（即原左孩子变为父节点），冲突的右孩变左孩
+    private TreeNode RightRotate(TreeNode y)
+    {
+        TreeNode x = y.left;
+        TreeNode T2 = x.right;
+
+        x.right = y;
+        y.left = T2;
+
+        y.height = Math.Max(Height(y.left), Height(y.right)) + 1;
+        x.height = Math.Max(Height(x.left), Height(x.right)) + 1;
+
+        return x;
+    }
+
+    // 左旋：失衡节点向左旋转（即原右孩子变为父节点），冲突的左孩变右孩
+    private TreeNode LeftRotate(TreeNode x)
+    {
+        TreeNode y = x.right;
+        TreeNode T2 = y.left;
+
+        y.left = x;
+        x.right = T2;
+        x.height = Math.Max(Height(x.left), Height(x.right)) + 1;
+        y.height = Math.Max(Height(y.left), Height(y.right)) + 1;
+
+        return y;
+    }
+
+    // 插入节点的接口
+    public void Insert(int val)
+    {
+        root = Insert(root, val);
+    }
+
+    // 插入
+    private TreeNode Insert(TreeNode node, int val)
+    {
+        // 1. 正常的二叉搜索树插入
+        if (node == null) return new TreeNode(val);
+
+        if (val < node.val )
+        {
+            node.left = Insert(node.left, val);
+        }
+        else if (val > node.val)
+        {
+            node.right = Insert(node.right, val);
+        }
+        else
+        {
+            return node; // AVL树不允许重复值
+        }
+
+        // 2.更新节点高度
+        node.height = Math.Max(Height(node.left), Height(node.right)) + 1;
+
+        // 3.计算平衡因子
+        int balance = GetBalance(node);
+
+        // 4. 四种失衡情况
+
+        // 左左情况
+        if (balance > 1 && val < node.left.val)
+            return RightRotate(node);
+
+        // 右右情况
+        if (balance < -1 && val > node.right.val)
+            return LeftRotate(node);
+
+        // 左右情况
+        if (balance > 1 && val > node.left.val)
+        {
+            node.left = LeftRotate(node.left);
+            return RightRotate(node);
+        }
+
+        // 右左情况
+        if (balance < -1 && val < node.right.val)
+        {
+            node.right = RightRotate(node.right);
+            return LeftRotate(node);
+        }
+        // 返回未改变的节点指针
+        return node;
+
+    }
+}
+        </code></pre>
+        <bold>4. 删除操作</bold>
+        <p>
+            <li>和二叉搜索树一样删除节点。</li>
+            <li>从删除节点的父节点开始，向上检查每一个祖先的平衡因子，如果某个节点的平衡因子超过1，则通过旋转平衡。</li>
+            <li>旋转操作和上述插入操作的四种情况相同。</li>
+        </p>
+        <pre><code>
+pubic class AVLTree
+{
+    public void Delete(int val)
+    {
+        root = Delete(root, val);
+    }
+
+    private TreeNode Delete(TreeNode node, int val)
+    {
+        if (node == null) return null;
+        
+        if (val < node.val)
+        {
+            node.left = Delete(node.left, val);
+        }
+        else if (val > node.val)
+        {
+            node.right = Delete(node.right, val);
+        }
+        else
+        {
+            // 叶结点
+            if (node.left == null && node.right == null)
+            {
+                return null;
+            }
+            // 只有一个子节点
+            else if (node.left == null)
+            {
+                return node.right;
+            }
+            else if (node.right == null)
+            {
+                return node.left;
+            }
+            // 有两个子节点
+            TreeNode temp = FindMin(node.right);
+            node.val = temp.val;
+            node.right = Delete(node.right, temp.val);
+        }
+        
+        // 更新节点高度
+        node.height = Math.Max(Height(node.left), Height(node.right)) + 1;
+
+        // 是否平衡
+        int balance = GetBalance(node);
+
+        // 四种失衡情况
+        // 左左情况
+        if (balance > 1 && GetBalance(node.left) >= 0)
+        {
+            return RightRotate(node);
+        }
+        // 右右情况
+        if (balance < -1 && GetBalance(node.right) <= 0)
+        {
+            return LeftRotate(node);
+        }
+        // 左右情况
+        if (balance > 1 && GetBalance(node.left) < 0)
+        {
+            node.left = LeftRotate(node.left);
+            return RightRotate(node);
+        }
+        // 右左情况
+        if (balance < -1 && GetBalance(node.right) > 0)
+        {
+            node.right = RightRotate(node.right);
+            return LeftRotate(node);
+        }
+
+        return node;
+    }
+}
+        </code></pre>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>

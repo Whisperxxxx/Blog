@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StringBuilder</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="language.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>StringBuilder</h1>
+        <h2>定义</h2>
+        <p>
+            在 C# 中，string 是不可变的(immutable)，每次修改都会创建新的字符串对象。。而StringBuilder则是可变的。
+        </p>
+        <h2>命名空间</h2>
+        <p>StringBuilder 位于 System.Text 命名空间，使用时需要添加    
+            <pre><code>using System.Text;</code></pre>
+        </p>
+        <h2>常规用法</h2>
+        <p>
+            <pre><code>
+StringBuilder sb = new StringBuilder();
+// 可以添加各种类型
+sb.Append("Hello");
+sb.Append(123);
+// 指定位置插入
+sb.Insert(7, "World");
+// 替换字符串
+sb.Replace("World", "C#");
+// 删除
+sb.Remove(0, 5);
+// 清空
+sb.Clear();
+// 转换类型
+string result = sb.ToString();
+
+
+            </code></pre>
+        </p>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>

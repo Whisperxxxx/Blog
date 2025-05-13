@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>红黑树</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="datastruct.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>红黑树</h1>
+        <h2>定义</h2>
+        <p>
+            红黑树是一种二叉搜索树，每个节点都有一个额外的属性：颜色（红色或黑色）。
+        </p> 
+
+        <h2>性质</h2>
+        <li><bold>1. 每个节点是红色或黑色。</bold></li>
+        <li><bold>2. 根节点是黑色的。</bold></li>
+        <li><bold>3. 所有叶节点(即树尾端NIL指针或者NULL节点)是黑色的。</bold></li>
+        <li><bold>4. 红色节点的子节点必须是黑色</bold></li>
+        <li><bold>5. 任一节点到其每个叶节点的路径上，都包含相同数目的黑色节点。</bold></li>
+    
+        <h2>红黑树的基本操作</h2>
+        <p>
+            <bold>1. 查找操作</bold>
+            <li>与二叉搜索树完全一样。</li>
+        </p>
+        <p>
+            <bold>2. 插入操作</bold>
+            <li>先按照二叉搜索树的规则插入，新插入的节点为<bold>红色</bold>（因为插入红色节点不会破坏黑高度）</li>
+            <li>插入后可能会破坏红黑树的性质4，所以需要据父节点、叔节点和祖父节点的颜色，分情况调整。</li>
+        </p>
+        <p>
+            <bold>情况一：新节点是根节点</bold>
+            <li>直接将其颜色改为黑色</li>
+        </p>
+        <p>
+            <bold>情况二：父节点是黑色</bold>
+            <li>父节点是黑色，插入新节点为红色，不破坏性质，直接结束。</li>
+        </p>
+        <p>
+            <bold>情况三：父节点是红色</bold>
+            <br>遇到这种情况，则需要进一步检查叔节点的颜色:
+            <ul>
+                <bold>1. 叔节点是红色</bold>
+                <li>此时由于父节点是红，插入节点也是红，违反性质4，所以需要将父节点与叔节点涂成黑色</li>
+                <li>而此时黑高度变了，违反了性质5，所以需要把祖父节点涂成红色。</li>
+                <li>然后将祖父节点作为当前节点（即新插入的节点  ），向上递归检查是哪种情况。</li>
+                <br><img src="image/RBT1.png" width="700" height="300">
+            </ul>
+            <ul>
+                <bold>2. 叔节点是黑色或者NIL，当前节点是右孩子。</bold>
+                <li>将父节点作为当前节点，然后进行左旋，此时变为下面的情况3。</li>
+                <br><img src="image/RBT2.png" width="1200" height="300">
+            </ul>
+            <ul>
+                <bold>3. 叔节点是黑色或者NIL，当前节点是左孩子。</bold>
+                <li>将父节点变为黑色，祖父节点变为红色</li>
+                <li>将祖父节点作为当前节点，然后进行右旋。</li>
+                <br><img src="image/RBT3.png" width="1000" height="300">
+
+            </ul>
+        </p>
+        <p>
+            <bold>3. 删除操作</bold>
+            <li>先按照二叉搜索树的规则删除。</li>
+            <li>删除上一共只有三种可能，一是被删除节点为叶子节点，二是被删除节点只有一个孩子，三是被删除节点有两个孩子。而第三条最终实际上会转化为第一和二，所以只会有两种情况。</li>
+        </p>
+        <p>
+            <bold>情况一：被删除节点只存在一个孩子节点</bold>
+            <ul>
+                <li>这种情况不需要颜色，因为被删除节点一定是黑色，孩子节点一定是红色。否则将会违背性质4或者性质5</li>
+                <li>此时只需要把被删除节点的父节点指向被删除节点的孩子节点，并把孩子节点染成黑色即可。</li>
+                <br><img src="image/RBT4.png" width="500" height="400">
+            </ul>
+        </p>
+        <p>
+            <bold>情况二：被删除节点不存在孩子节点。</bold>
+            <ul>
+                <bold>2.1 被删除节点为红色</bold>
+                <li>不影响黑高度，直接删除即可</li>
+            </ul>
+            <ul>
+                <bold>2.2 被删除节点为黑色（删除后被双黑）</bold>
+                <ul>
+                    <bold>2.2.1兄弟节点为黑色，兄弟至少有一个红孩子</bold>
+                    <li>此时有四种情况。分别是LL,RR,LR,RL</li>
+                    <ul>
+                        <bold>LL：s, r在左边，如图。</bold>
+                        <li>先变色，r变s, s变p, p变黑</li>
+                        <li>对父节点p右旋。</li>
+                        <li>双黑变单黑</li>
+                        <br><img src="image/RBT5.png" width="300" height="220"> ----->
+                        <img src="image/RBT6.png" width="300" height="220">
+                    </ul>
+                    
+                    <ul>
+                        <bold>RR:s, r 在右边，如图。</bold>
+                        <li>先变色，r变s, s变p, p变黑</li>
+                        <li>对父节点p左旋。</li>
+                        <li>双黑变单黑</li>
+                        <br><img src="image/RBT7.png" width="300" height="220">----->
+                        <img src="image/RBT8.png" width="300" height="220">
+                    </ul>
+
+                    <ul>
+                        <bold>LR:s在左, r在右，如图。</bold>
+                        <li>先变色，r变p, p变黑</li>
+                        <li>左右旋：先对左孩子s进行左旋，再对父节点p进行右旋。</li>
+                        <li>双黑变单黑</li>
+                        <br><img src="image/RBT9.png" width="300" height="220">----->
+                        <img src="image/RBT10.png" width="300" height="220">
+                    </ul>
+
+                    <ul>
+                        <bold>RL:s在右, r在左，如图。</bold>
+
+                        <li>先变色，r变p, p变黑</li>
+                        <li>右左旋：先对右孩子s进行右旋，再对父节点p进行左旋。</li>
+                        <li>双黑变单黑</li>
+                        <br><img src="image/RBT11.png" width="300" height="220">----->
+                        <img src="image/RBT12.png" width="300" height="220">
+                    </ul>
+                </ul>
+
+                <ul>
+                    <bold>2.2.2 兄弟节点为黑色，兄弟的孩子都为黑色或NIL</bold>
+                    <li>先将双黑（即被删除的节点）的兄弟变红。</li>
+                    <li>然后将双黑上移到父节点。</li>
+                    <li>如果此时双黑为黑，则向上层情况迭代。即从2.2开始判断是2.2.1还是2.2.2还是下面的2.2.3</li>
+                    <li>如果此时双黑为红或者根节点，则直接双黑变单黑</li>
+                    <br><img src="image/RBT13.png" width="300" height="220">----->
+                    <img src="image/RBT14.png" width="300" height="220">----->
+                    <img src="image/RBT15.png" width="300" height="220">----->
+                    <img src="image/RBT16.png" width="300" height="220">----->
+                    <img src="image/RBT17.png" width="300" height="220">
+                    <br>
+                    <br><img src="image/RBT18.png" width="300" height="220">----->
+                    <img src="image/RBT19.png" width="300" height="220">----->
+                    <img src="image/RBT20.png" width="300" height="220">
+
+                </ul>
+
+                <ul>
+                    <bold>2.2.3 兄弟节点为红色</bold>
+                    <li>先将兄弟节点s和父亲节点p互换颜色</li>
+                    <li>父亲节点p朝双黑节点旋转。即双黑节点在右子树则右旋，左子树则左旋。</li>
+                    <li>向上层情况迭代。即从2.2开始判断是2.2.1还是2.2.2还是下面的2.2.3</li>
+                    <br><img src="image/RBT21.png" width="300" height="220">----->
+                    <img src="image/RBT22.png" width="300" height="220">----->
+                    <img src="image/RBT23.png" width="300" height="220">----->
+                    <img src="image/RBT24.png" width="300" height="220">
+
+                </ul>
+
+        </p>
+
+        <h2>红黑树复杂度分析</h2>
+        <p>
+            红黑树的时间复杂度是O(log N) , 是因为它的高度最多为<bold>2log(N + 1)</bold>, 其中N是节点数。
+            <br>这个高度来源于红黑树的黑高度以及红黑树的性质。
+            <br>黑高度是从某个节点到其叶子节点路径中，黑色节点的数量（不包含NIL节点）。
+            <br>设红黑树的黑高度为bh。
+            <br>根据性质4，红色节点最多的情况下为一个黑节点，一个红节点。所以红色节点的数量最多为bh。  
+            <br>因此，红黑树的高度满足： <bold>h ≤ 2 · bh</bold>
+            <br>所以对于一棵高度为bh的红黑树，其节点数N至少为 N ≥ 2^bh - 1
+            <br>所以bh ≤ log(N + 1)
+            <br>因为红黑树的最高高度<bold>h ≤ 2 · bh ≤ 2log(N + 1)</bold>
+        </p>
+        <h2>红黑树与AVL树的区别</h2>
+        <p>
+            <table border="1" cellspacing="0" cellpadding="5">
+                <thead>
+                    <tr>
+                        <th>特性</th>
+                        <th>红黑树</th>
+                        <th>AVL树</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>平衡条件</strong></td>
+                        <td>较宽松（最长路径 ≤ 2倍最短路径）</td>
+                        <td>严格（左右子树高度差 ≤ 1）</td>
+                    </tr>
+                    <tr>
+                        <td><strong>插入/删除</strong></td>
+                        <td>更快（旋转次数少）</td>
+                        <td>较慢（旋转次数多）</td>
+                    </tr>
+                    <tr>
+                        <td><strong>查找</strong></td>
+                        <td>稍慢（树较高）</td>
+                        <td>更快（树更平衡）</td>
+                    </tr>
+                    <tr>
+                        <td><strong>适用场景</strong></td>
+                        <td>频繁插入/删除的场景</td>
+                        <td>频繁查找的场景</td>
+                    </tr>
+                </tbody>
+            </table>
+        </p>
+
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top K问题</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="algorithms.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Top K问题</h1>
+        <h2>问题类型</h2>
+        <p>
+            <ul>
+                <li>找到第K个最大（小）的元素</li>
+                <li>找到前K个高频元素</li>
+                <li>找到最大（小）的k个数</li>
+            </ul>
+        </p>
+        <h2>问题一：找到数组中第K个最大（小）的元素</h2>
+        <p>
+            给定整数数组 nums 和整数 k，请返回数组中第 k 个最大的元素。
+        </p>
+        <p>
+            <bold>解法一：全局排序</bold>
+            <p>直接用Sort排序，降序就取第k个, 升序就取第nums.Length - 1 个。
+            <br>时间复杂度：O(n log n)
+            </p>
+            <pre><code>
+public class Solution
+{
+    public int FindKthLargest(int[] nums, int k)
+    {
+        Array.Sort(nums);  // 对数组进行升序排序
+        return nums[nums.Length - k];  // 返回第 K 个最大的元素
+    }
+}
+            </code></pre>
+        </p>
+
+        <p>
+            <bold>解法二：最小堆</bold>
+            <p>构造一个前k个最大元素的最小堆，堆顶为最小值，即第k个最大值。然后将堆顶元素与剩下的nums.Length - k 对比，如果大于堆顶则替换，然后堆化。
+            <br>时间复杂度：遍历数组需要O(n) 的时间复杂度, 一次堆化需要O(log k)的时间复杂度。所以时间复杂度为O(n log k);
+            </p>
+            <pre><code>
+public class Solution {
+    public int FindKthLargest(int[] nums, int k) {
+        int[] heap = new int[k];
+        int i = 0;
+        while (i < k)
+        {
+            heap[i] = nums[i++];
+        }
+        BuildHeap(heap);
+
+        for (int j = k; j < nums.Length; j++)
+        {
+            if (nums[j] > heap[0])
+            {
+                heap[0] = nums[j];
+                Heapify(heap, 0);
+            }
+        }
+        return heap[0];
+    }
+
+    private void Heapify(int[] arr, int index)
+    {
+        while (true)
+        {
+            int smallest = index;
+            int left = 2 * index + 1; 
+            int right = 2 * index + 2; 
+
+            if (left < arr.Length && arr[left] < arr[smallest])
+            {
+                smallest = left;
+            }
+            if (right < arr.Length && arr[right] < arr[smallest])
+            {
+                smallest = right;
+            }
+            if (smallest != index)
+            {
+                int temp = arr[index];
+                arr[index] = arr[smallest];
+                arr[smallest] = temp;
+
+                index = smallest;
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+
+    private void BuildHeap(int[] arr)
+    {
+        for (int i = arr.Length / 2 -1; i>= 0; i--)
+        {
+            Heapify(arr, i);
+        }
+    }
+
+}
+            </code></pre>
+        </p>
+
+        <p>
+            <bold>解法三：快速选择</bold>
+            <p>
+                快速选择是基于快速排序的算法。仅需要在每次执行快排时，比较基准值是否在nums.Length - k的位置上。如果n - k 小于基准值，则说明在左边。如果大于基准值，则说明在右边。如果等于基准值，则第k个最大值就是基准值。
+                <br>时间复杂度：平均时间复杂度O(n)，最坏情况时间复杂度为O(n2)
+                <br>空间复杂度：O(1)
+            </p>
+            <pre><code>
+public class Solution {
+    public int FindKthLargest(int[] nums, int k) {
+
+        return QuickSelect(nums, 0, nums.Length - 1, nums.Length - k);   
+    }
+
+private int QuickSelect(int[] nums, int left, int right, int k)
+    {
+        if (left == right)
+        {
+            return nums[left];
+        }
+
+        int pivotIndex = Partition(nums, left, right);
+
+        if (k == pivotIndex)
+        {
+            return nums[pivotIndex];
+        }
+        else if (k < pivotIndex)
+        {
+            return QuickSelect(nums, left, pivotIndex - 1, k);
+        }
+        else 
+        {
+            return QuickSelect(nums, pivotIndex + 1, right, k);
+        }
+    }
+
+    private int Partition(int[] nums, int start, int end)
+    {
+        Random rand = new Random();
+        int randIndex = rand.Next(start, end + 1);
+        Swap(nums, randIndex, end);
+        int left = start;
+        int right = end -1;
+        int pivot = nums[end];
+
+        while (left <= right)
+        {
+            while (left <= right && nums[left] < pivot)
+            {
+                left++;
+            }
+
+            while (left <= right && nums[right] > pivot)
+            {
+                right--;
+            }
+            if (left <= right)
+            {
+                Swap(nums, left, right);
+                left++;
+                right--;
+
+            }
+        }
+        Swap(nums, left, end);
+        return left;
+    }
+
+    private void Swap(int[] nums, int left, int right)
+    {
+        int temp = nums[left];
+        nums[left] = nums[right];
+        nums[right] = temp;
+    }
+}
+                
+                
+            </code></pre>
+        </p>
+        <h2>问题二：找到数组中前K个高频元素</h2>
+        <p>
+            给定一个整数数组 nums 和整数 k，请返回数组中出现频率前 k 高的元素。结果可按任意顺序返回。
+        </p>
+        <p>
+            <bold>解法一：桶排序</bold>
+            <p>用哈希表统计频率，之后将频率作为数组下标，存入对应数组，从后往前数k个元素，即为前K个高频元素。
+            <br>时间复杂度：O(n)
+            <br>空间复杂度：O(n)
+        </p>
+            <pre><code>
+public class Solution 
+{
+    public int[] TopKFrequent(int[] nums, int k) 
+    {
+        Dictionary&lt;int, int&gt; numsMap = new Dictionary&lt;int, int&gt;();
+
+        foreach(int num in nums)
+        {
+            if (numsMap.ContainsKey(num))
+            {
+                numsMap[num]++;
+            }
+            else
+            {
+                numsMap[num] = 1;
+            }
+        }
+
+        //注意这里是声明了一个值为列表的数组，而不是数组的列表
+        List&lt;int&gt;[] numslist = new List&lt;int&gt;[nums.Length + 1]; // 容量为nums.Length + 1是为了避免极端情况, 假如里面有4个1, 那么就需要存储到numslist[4],即需要5个位置
+        foreach (int map in numsMap.Keys)
+        {
+            if (numslist[numsMap[map]] == null)
+            {
+                numslist[numsMap[map]] = new List&lt;int&gt;();
+            }
+            numslist[numsMap[map]].Add(map);
+        }
+
+        List&lt;int&gt; result = new List&lt;int&gt;();
+        for (int i = numslist.Length - 1; i>=0 && result.Count < k; i--)
+        {
+            if (numslist[i] != null)
+            {
+                result.AddRange(numslist[i]);
+            }
+        } 
+        return result.ToArray();
+    }
+}
+            </code></pre>
+         </p>
+         <p>
+            <bold>解法二：最小堆</bold>
+            <p>
+                用哈希表统计频率，然后维护一个大小为k的最小堆(元素为频率)。将堆顶与k后的元素比较。最后返回堆的值，即为前k个高频元素。
+                <br>时间复杂度：O(n log k)
+                <br>空间复杂度：O(n)
+            </p>
+            <pre><code>
+public class Solution 
+{
+    public int[] TopKFrequent(int[] nums, int k)
+        {
+        Dictionary<int, int> numsMap = new Dictionary<int, int>();
+
+        foreach (int num in nums)
+        {
+            if (numsMap.ContainsKey(num))
+            {
+                numsMap[num]++;
+            }
+            else
+            {
+                numsMap[num] = 1;
+            }
+        }
+
+        List<(int, int)> heap = new List<(int, int)>();
+
+        foreach (var n in numsMap)
+        {
+            if (heap.Count < k)
+            {
+                heap.Add((n.Value, n.Key));
+                int index = heap.Count - 1;
+                HeapifyUp(heap, index);
+            }
+            else if (n.Value >  heap[0].Item1)
+            {
+                heap[0] = (n.Value, n.Key);
+                HeapifyDown(heap, 0);
+            }
+        }
+
+
+        int[] result = new int[k];
+        for (int i = 0; i < k; i++)
+        {
+            result[i] = heap[i].Item2;
+        }
+
+        return result;
+    }
+
+    private void HeapifyUp(List<(int, int)> arr, int index)
+    {
+        while (index > 0)
+        {
+            int parent = (index - 1) / 2;
+            if ( arr[index].Item1 < arr[parent].Item1)
+            {
+                
+                var temp = arr[parent];
+                arr[parent] = arr[index];
+                arr[index] = temp;
+
+                index = parent;
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+    private void HeapifyDown(List<(int, int)> arr, int index)
+    {
+        while (true)
+        {
+            int left = 2 * index + 1;
+            int right = 2 * index + 2;
+            int smallest = index;
+
+            if (left < arr.Count && arr[left].Item1 < arr[smallest].Item1)
+            {
+                smallest = left;
+            }
+            if (right < arr.Count && arr[right].Item1 < arr[smallest].Item1)
+            {
+                smallest = right;
+            }
+
+            if (smallest != index)
+            {
+                (int, int) temp = arr[index];
+                arr[index] = arr[smallest];
+                arr[smallest] = temp;
+
+                index = smallest;
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+}
+            </code></pre>
+         </p>
+        
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>

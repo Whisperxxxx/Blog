@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>贪心算法</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="algorithms.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>贪心算法</h1>
+        <h2>定义</h2>
+        <p>
+            贪心算法（Greedy Algorithm）是一种通过局部最优选择来达到全局最优的算法策略。要用于有<bold>贪心选择性质</bold> 和 <bold>最优子结构</bold> 的问题。
+            <li>贪心选择性质：全局最优解可以通过一系列局部最优选择得到。即：当前的选择不会影响后续子问题的解。</li>
+            <li>最优子结构：问题的最优解包含其子问题的最优解。例如，动态规划也满足此性质，但贪心算法不保存子问题的解。</li>
+        </p>
+        <h2>特点</h2>
+        <p>
+            <li><bold>1. 局部最优选择：</bold>每一步选择当前看起来最好的解，不考虑未来的影响。</li>
+            <li><bold>2. 不可回溯</bold>一旦做出选择，就不会回头修改之前的选择。</li>
+            <li><bold>3. 高效性：</bold>通常时间复杂度较低，但需要验证其正确性。</li>
+        </p>
+        <h2>经典问题</h2>
+        <p>
+            <bold>买卖股票的最佳时机</bold>
+            <p>
+                时间复杂度O(n),空间复杂度O(1)
+                <pre><code>
+public class Solution {
+    public int MaxProfit(int[] prices) {
+        int buy = int.MaxValue;
+        int sell = 0;
+
+        foreach(int price in prices)
+        {
+            if (price < buy)
+            {
+                buy = price;
+            }
+            else
+            {
+                sell = Math.Max(sell, price - buy);
+            }
+        }
+        return sell;
+    }
+}
+                </code></pre>
+            </p>
+            <bold>跳跃游戏</bold>
+            <p>
+                时间复杂度O(n),空间复杂度O(1)
+                <pre><code>
+public class Solution {
+    public bool CanJump(int[] nums) {
+        int maxReach = 0;
+
+        for (int i = 0; i < nums.Length; i ++)
+        {
+            if (i > maxReach) return false;
+            maxReach = Math.Max(maxReach, i + nums[i]);
+            if (maxReach >= nums.Length -1) return true;
+        }
+        return true;
+    }
+}
+                </code></pre>
+            </p>
+            <bold>跳跃游戏Ⅱ</bold>
+            <p>
+                时间复杂度O(n),空间复杂度O(1)
+                <pre><code>
+public class Solution {
+    public int Jump(int[] nums) {
+        int count = 0;
+        int maxReach = 0;
+        int cur = 0;
+
+        for (int i = 0; i <nums.Length - 1; i++)
+        {
+            maxReach = Math.Max(maxReach, i + nums[i]);
+
+            if (i == cur)
+            {
+                count++;
+                cur = maxReach;
+            }
+
+            if (cur >= nums.Length - 1) break;
+        }
+        return count;
+    }
+}
+                </code></pre>           
+            </p>
+            <bold>划分字母区间</bold>
+            <p>
+                时间复杂度O(n),空间复杂度O(1)
+                <pre><code>
+public class Solution {
+    public IList<int> PartitionLabels(string s) {
+        int[] last = new int[26];
+        IList<int> result = new List<int>();
+        for(int i = 0; i < s.Length; i++)
+        {
+            last[s[i] - 'a'] = i;
+        }
+        int end = 0, start = 0;
+        for (int i = 0; i < s.Length; i++)
+        {
+            end = Math.Max(end, last[s[i] - 'a']);
+
+            if (i == end)
+            {
+                result.Add(end - start + 1);
+                start = end + 1;
+            }
+        }
+        return result;
+    }
+}
+                </code></pre>
+            </p>
+
+        </p>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>

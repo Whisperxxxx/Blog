@@ -86,7 +86,230 @@ public class HeapSort
 }
             </code></pre>
         </p>
+    
+    <h2>数组中的第K个最大元素</h2>
+    <p>
+    <pre><code>
+public class Solution
+{
+    public int FindKthLargest(int[] nums, int k)
+    {
+        int[] heap = new int[k];
+        int i = 0;
+        while (i < k)
+        {
+            heap[i] = nums[i++];
+        }
+        BuildHeap(heap);
 
+        for (int j = k; j < nums.Length; j++)
+        {
+            if (nums[j] > heap[0])
+            {
+                heap[0] = nums[j];
+                Heapify(heap, 0);
+            }
+        }
+        return heap[0];
+    }
+
+    private void Heapify(int[] arr, int index)
+    {
+        while(true)
+        {
+            int smallest = index;
+            int left = 2 * index + 1;
+            int right = 2 * index +2;
+
+            if (left <arr.Length && arr[left] < arr[smallest])
+            {
+                smallest = left;
+            }
+            if (right < arr.Length && arr[right] < arr[smallest])
+            {
+                smallest = right;
+            }
+            if (smallest != index)
+            {
+                int temp = arr[index];
+                arr[index] = arr[smallest];
+                arr[smallest] = temp;
+
+                index = smallest;
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+    
+
+    private void BuildHeap(int[] arr)
+    {
+        for (int i = arr.Length / 2 - 1; i>= 0; i--)
+        {
+            Heapify(arr, i);
+        }
+    }
+
+}
+    </code></pre>
+</p>
+
+    <h2>数组中的前K个高频元素</h2>
+    <p>
+    <pre><code>
+        public class Solution 
+        {
+            public int[] TopKFrequent(int[] nums, int k)
+                {
+                Dictionary<int, int> numsMap = new Dictionary<int, int>();
+        
+                foreach (int num in nums)
+                {
+                    if (numsMap.ContainsKey(num))
+                    {
+                        numsMap[num]++;
+                    }
+                    else
+                    {
+                        numsMap[num] = 1;
+                    }
+                }
+        
+                List<(int, int)> heap = new List<(int, int)>();
+        
+                foreach (var n in numsMap)
+                {
+                    if (heap.Count < k)
+                    {
+                        heap.Add((n.Value, n.Key));
+                        int index = heap.Count - 1;
+                        HeapifyUp(heap, index);
+                    }
+                    else if (n.Value >  heap[0].Item1)
+                    {
+                        heap[0] = (n.Value, n.Key);
+                        HeapifyDown(heap, 0);
+                    }
+                }
+        
+        
+                int[] result = new int[k];
+                for (int i = 0; i < k; i++)
+                {
+                    result[i] = heap[i].Item2;
+                }
+        
+                return result;
+            }
+        
+            private void HeapifyUp(List<(int, int)> arr, int index)
+            {
+                while (index > 0)
+                {
+                    int parent = (index - 1) / 2;
+                    if ( arr[index].Item1 < arr[parent].Item1)
+                    {
+                        
+                        var temp = arr[parent];
+                        arr[parent] = arr[index];
+                        arr[index] = temp;
+        
+                        index = parent;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+            private void HeapifyDown(List<(int, int)> arr, int index)
+            {
+                while (true)
+                {
+                    int left = 2 * index + 1;
+                    int right = 2 * index + 2;
+                    int smallest = index;
+        
+                    if (left < arr.Count && arr[left].Item1 < arr[smallest].Item1)
+                    {
+                        smallest = left;
+                    }
+                    if (right < arr.Count && arr[right].Item1 < arr[smallest].Item1)
+                    {
+                        smallest = right;
+                    }
+        
+                    if (smallest != index)
+                    {
+                        (int, int) temp = arr[index];
+                        arr[index] = arr[smallest];
+                        arr[smallest] = temp;
+        
+                        index = smallest;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+                    </code></pre>
+                </p>
+    <h2>数据流的中位数</h2>
+    <p>
+        <pre><code>
+public class MedianFinder 
+{
+    private PriorityQueue&lt;int, int&gt; leftHeap;
+    private PriorityQueue&lt;int, int&gt; rightHeap;
+    public MedianFinder() 
+    {
+        leftHeap = new PriorityQueue&lt;int, int&gt;();
+        rightHeap = new PriorityQueue&lt;int, int&gt;();
+    }
+    
+    public void AddNum(int num) 
+    {
+        if (leftHeap.Count == 0 || num <= leftHeap.Peek())
+        {
+            leftHeap.Enqueue(num, -num);
+        }
+        else
+        {
+            rightHeap.Enqueue(num, num);
+        }
+
+        if (leftHeap.Count > rightHeap.Count + 1)
+        {
+            num = leftHeap.Dequeue();
+            rightHeap.Enqueue(num, num);   
+        }
+        else if (rightHeap.Count > leftHeap.Count)
+        {
+            num = rightHeap.Dequeue();
+            leftHeap.Enqueue(num, -num);
+        }
+    }
+    
+    public double FindMedian() 
+    {
+        if (leftHeap.Count > rightHeap.Count)
+        {
+            return leftHeap.Peek();
+        }
+        else
+        {
+            return (leftHeap.Peek() + rightHeap.Peek()) / 2.0;
+        }
+    }
+}
+            
+        </code></pre>
+    </p>
 
     </main>
     <footer>

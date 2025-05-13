@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>回溯算法</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="algorithms.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>回溯算法</h1>
+        <h2>定义</h2>
+        <p>
+            回溯算法（Backtracking Algorithm）可以看作是一种试探性搜索算法，它采用试错的思想，尝试分步地去解决一个问题。
+            <br>回溯法通常用<bold>递归</bold>来实现，可能出现两种情况：
+            <li>如果当前选择导致部分解仍然满足约束条件，就继续<bold>向下递归</bold>搜索；</li>
+            <li>如果发现当前选择导致冲突（即违反了约束条件），就<bold>撤销</bold>该选择（回溯），尝试其他分支。</li>
+        </p>
+        <h2>算法框架</h2>
+        <p>
+            <pre><code>
+def backtrack(路径, 选择列表):
+if 满足结束条件:
+    记录结果
+    return
+
+for 选择 in 选择列表:
+    做选择
+    backtrack(新的路径, 新的选择列表)
+    撤销选择
+            </code></pre>
+        </p>
+        <h2>经典问题</h2>
+        <p>
+            <bold>全排列</bold>
+            <p>
+                时间复杂度O(n * n!), 空间复杂度O(n)
+                <pre><code>
+public class Solution {
+    public IList&lt;IList&lt;int&gt;&gt; Permute(int[] nums) {
+        var result = new List&lt;IList&lt;int&gt;&gt;();
+        BackTrack(result, nums, 0);
+        return result;
+    }
+
+    private void BackTrack(IList&lt;IList&lt;int&gt;&gt; result,int[] nums, int start )
+    {
+        if (start == nums.Length)
+        {
+            result.Add(new List&lt;int&gt;(nums));
+            return;
+        }
+
+        for (int i = start; i < nums.Length; i++)
+        {
+            Swap(nums, i, start);
+            BackTrack(result, nums, start + 1);
+            Swap(nums, i, start);
+        }
+    
+    }
+
+    private void Swap(int[] nums, int left, int right)
+    {
+        int temp = nums[left];
+        nums[left] = nums[right];
+        nums[right] = temp;
+    }
+}
+                </code></pre>
+            </p>
+            <bold>子集</bold>
+            <p>
+                时间复杂度O(n * 2 ^n), 空间复杂度O(n * 2 ^n);
+                <pre><code>
+public class Solution {
+    public IList&lt;IList&lt;int&gt;&gt; Subsets(int[] nums) {
+        var result = new List&lt;IList&lt;int&gt;&gt;();
+        BackTrack(result,new List&lt;int&gt;(), nums, 0);
+        return result;
+    }
+
+    private void BackTrack(IList&lt;IList&lt;int&gt;&gt; result,List&lt;int&gt; tempList, int[] nums, int start )
+    {
+        result.Add(new List&lt;int&gt;(tempList)); 
+
+        for (int i = start; i < nums.Length; i++)
+        {
+            tempList.Add(nums[i]);
+            BackTrack(result, tempList, nums, i + 1);
+            tempList.RemoveAt(tempList.Count - 1);
+        }
+    }
+}
+                </code></pre>
+            </p>
+        </p>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>
