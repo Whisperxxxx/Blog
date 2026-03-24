@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPU优化</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="unity.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>GPU优化</h1>
+        <h2>优化方向</h2>
+        <p>
+            GPU与CPU不同,所以侧重点自然也不一样 GPU的瓶颈主要存在在如下的方面:
+            <ul>
+                <li>填充率,可以简单的理解为图形处理单元每秒渲染的像素数量</li>
+                <li>像素的复杂度,比如动态阴影,光照,复杂的shader等等</li>  
+                <li>几何体的复杂度(顶点数量)</li>
+                <li>GPU的显存带宽</li>
+            </ul>
+
+            总结上述，影响GPU性能的有两大方面
+
+            <br>1. 顶点数量过多
+            <br>2. GPU显存带宽。
+            <br>
+            <br>
+            解决策略
+            <br>1. 减少顶点数量,简化计算复杂度
+            <br>2. 压缩图片,以适应显存带宽
+        </p>
+        <h2>减少绘制的数目</h2>
+       <p>
+            <ul>
+                <li>保持材质的数目尽可能少 </li>
+                <li>使用纹理图集</li>
+                <li>使用光照纹理(lightmap)而非实时灯光</li>
+                <li>使用LOD（Level of detail）按照模型的位置和重要程度决定显示哪一模型。</li>
+                <li>遮挡剔除(Occlusion culling)</li>
+            </ul>
+       </p>
+       <h2>优化显存带宽</h2>
+       <p>
+            压缩图片或纹理，减少显存带宽的压力
+            <ul>
+                <li>压缩格式: 使用合理的压缩格式，能够有效降低纹理带宽。</li>
+                <li>MipMap: MipMap的意思是分级细化纹理，也可以理解为图片的LOD. 能够用一小部分内存上升作为代价有效降低带宽。</li>
+            </ul>
+       </p>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A*寻路算法</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="algorithms.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>A*寻路算法</h1>
+        <h2>一、核心思想</h2>
+        <p>
+            A*算法的核心思想是：它结合了Dijkstra算法（保证找到最短路径）和贪心最佳优先搜索算法（快速朝向目标前进）的优点。
+            <br>它通过一个代价函数 F(n) = G(n) + H(n) 来评估每个节点的优先级：
+            <ul>
+            <li>G(n)：从起始点移动到当前节点 n 的实际代价。这是一个已知的、准确的值。</li>
+            <li>H(n)：从当前节点 n 到目标点的预估代价。这是一个猜测值，也被称为启发函数（Heuristic Function）。</li>
+            <li>F(n)：通过 G(n) 和 H(n) 的综合，来估算从起点经过节点 n 到达终点的总代价。算法总是优先探索 F(n) 值最小的节点，认为它最有可能在最佳路径上。</li>
+            </ul>
+        </p>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unity UI性能优化</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="unity.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Unity UI性能优化</h1>
+        <h2>1. 整理切图和图集</h2>
+        <p>
+            优化的基础，旨在减少DrawCall和内存占用。
+            <br>1. 删除项目中不再使用的旧图片资源，防止不必要的内存占用和打包体积增大。
+            <br>2. 同一个界面或功能的图片尽量打在同一个图集里。
+            <br>3. 大图不应打入常规图集，要么不进入任何图集，作为一张单独的Sprite（产生DrawCalll）。要么放到专门存大图的图集（内存浪费）。
+        </p>
+        <h2>2. 卡顿 (瞬时掉帧) 问题排查</h2>
+        <p>
+            <p>
+                1. 资源加载 (同步转异步)
+            <br>所有同步的资源加载都改成异步的
+            </p>
+            <p>
+                2. 实例化 (Instantiate)
+                <br>优化、简化prefab及其挂载着的component， 尽可能少的层级
+                <br>ScrollView类型的列表，勾上分帧实例化item的选项
+            </p>
+            <p>
+                3. 垃圾回收(GC)
+                <ul>
+                    <li>字符串操作 ：string是不可变的，所以每次进行拼接都会创建新的字符串，会产生GC。可以用StringBuilder</li>
+                    <li>装箱Boxing：将值类型转为object或引用类型时会发生装箱，导致内存分配</li>
+                    <li>LINQ 和匿名方法 ： LINQ方法返回的是迭代器对象，这些对象在堆上分配。且每个LINQ操作都会创建委托实例。 匿名方法捕获外部变量时，会创建闭包，且lamda表达式会创建新的委托实例。</li>
+                    <li>实例化GameObject和Component ： Instantiate 和 Destroy本身会产生GC，但主要来自于引擎端，可以使用对象池复用对用。</li>
+                    <li>DeBug.Log ： 将值类型转为object或引用类型时会发生装箱，导致内存分配</li>
+                </ul>
+            </p>
+            <h2>3. 平均帧率低</h2>
+            <p>
+                1. 留意Update里是否有高消耗逻辑
+                <br>2. RenderTexture参数是否可以优化
+                <br>3. DrawCall过高 : 1. 图集设置错误 2. 重叠打断合批 3. 全屏UI的主相机未关闭渲染
+                <br>4. OverDraw过高：隐藏不可见图层
+            </p>
+            <h2>4. 内存占用问题排查</h2>
+            <p>
+                1. 图集优化
+                2. 压缩格式
+            </p>
+
+        </p>
+    
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>

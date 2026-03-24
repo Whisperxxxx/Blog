@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draw Call</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="unity.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Draw Call</h1>
+        <h2>1. 定义</h2>
+        <p>DrawCall是指 CPU 对图形 API（如 OpenGL）接口的调用，然后命令 GPU 绘制物体。</p>
+        <h2>2. 为什么DrawCall会影响性能</h2>
+        <p>
+            因为CPU每次调用DrawCall，都需要CPU发送许多数据，而该工作是在单个线程上的，也就是说假如一帧内有成千上万个DrawCall， CPU就需要花费大量时间处理在这些调用上。
+            <br>而GPU渲染的速度比CPU提交命令的速度快很多，所以就会导致GPU大部分时间都在空闲地等待CPU 给它发送下一个绘制命令。这导致帧率（FPS）下降，游戏卡顿。
+        </p>
+        <h2>3. 减少DrawCall的方法</h2>
+        <p>
+            <h3>3.1 静态批处理</h3>
+            <p>
+                为标记为 Static的物体提前合并其网格数据，之后将它们作为一个整体进行渲染，极大减少 DrawCall。在Inspector中将Static复选框打勾即可。
+            </p>
+            <h3>3.2 动态批处理</h3>
+            <p>
+                态批处理机制是Unity引擎自动进行的, 但是有严格的条件。
+                <ul>
+                    <li>网格顶点属性数量不能超过 900。</li>
+                    <li>物体使用相同的材质。</li>
+                    <li>物体缩放必须一致（例如不能一个是 (1,1,1)，另一个是 (1,2,1)）。</li>
+                </ul>
+            </p>
+            <h3>3.3 GPU Instancing</h3>
+            <p>
+                对于使用完全相同网格和材质的物体，GPU Instancing 允许在一个 DrawCall 中绘制多个实例。
+                <br>它只上传一次网格和材质数据，然后通过一个缓冲区（Buffer）传递每个实例独有的信息（如位置、颜色等）. 
+                <br>Shader内定义预编译宏，材质的Inspector中开启Enable GPUInstancing.
+            </p>
+            <h3>3.4 纹理图集（Texture Atlas）</h3>
+            <p>
+                将多个小贴图合并成一个大贴图
+            </p>
+            <h3>3.5 合并网格</h3>
+            <p>
+                将多个网格合并成一个网格，这相当于直接消除了多个 DrawCall，但会失去对单个物体的控制能力。 
+            </p>
+        </p>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>

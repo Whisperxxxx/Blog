@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>物理组件优化</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="unity.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>物理组件优化</h1>
+        <h2>1. 设置合适的Fixed Timestep</h2>
+        <p>
+            <ul>
+                <li>它是什么？</li>
+                <p>
+                    设置位置File-Project Settings-Time. Fixed Timestep（固定时间步长）是Unity物理引擎更新的时间间隔。
+                    <br>物理模拟需要一个稳定的、固定的时间步进来计算，才能保证结果的可预测性和准确性（比如抛出一个物体，无论帧率高低，它都应该以相同的轨迹飞行）。
+                </p>
+                <li>它与物理组件的关系？</li>
+                <p>
+                    所有基于Unity物理引擎的组件（如Rigidbody（刚体）、CharacterController（角色控制器）、各种Collider（碰撞器）的交互计算）
+                    <br>都在FixedUpdate中或按Fixed Timestep的频率进行。这不是按帧更新的，而是按固定时间更新的。
+                </p>
+                <li>为什么需要调整？</li>
+                <p>
+                    值太小（频率过高）：例如默认值是0.02秒（即每秒模拟50次）。如果你的游戏物理很简单，不需要这么高的模拟精度，那么CPU就会每秒钟白白计算50次物理，造成巨大的性能浪费。
+                    <br>值太大（频率过低）：例如设置为0.1秒（每秒模拟10次）。物理计算的频率会变得很低，导致物理模拟变得“卡顿”和不精确。比如一个快速移动的球可能会直接穿过薄墙（因为两次计算之间它已经移动到了墙的另一边，称为“隧道效应”）。
+                </p>
+                <li>如何做？</li>
+                <p>
+                    对物理精度要求高的游戏（如赛车游戏、愤怒的小鸟）：保持默认的0.02s左右可能是必要的。
+                    <br>对物理要求不高的游戏（如RPG、卡牌游戏）：可以适当调大这个值，比如到0.04s或0.05s（即每秒模拟25-20次），能显著降低CPU负担。
+                </p>
+            </ul>
+        </p>
+        <h2>2. 不要使用网格碰撞器 (Mesh Collider)</h2>
+        <p>
+            <ul>
+                <li>Mesh Collider会根据3D模型的三角面网格来生成一个精确的碰撞体。模型多复杂，碰撞体就多复杂。
+                    <br>非凸起的Mesh Collider（即模型有凹陷）只能用于静态物体（如场景环境），并且只能和带有刚体的物体发生碰撞。
+                    <br>凸起(Convex)的Mesh Collider可以用于移动的物体，并能与其他Mesh Collider碰撞，但计算开销是最大的。</li>
+            </ul>
+        </p>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>

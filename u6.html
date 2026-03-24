@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AssetBundle (AB包)</title>
+    <link rel="stylesheet" href="c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="unity.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>AssetBundle (AB包)</h1>
+        <h2>定义</h2>
+        <p>
+            AssetBundle 是一个存档文件，包含可在运行时由 Unity 加载的特定于平台的非代码资源（比如模型、纹理、预制件、音频剪辑甚至整个场景）。
+        </p>
+        <h2>对比</h2>
+        <table border="1" cellspacing="0" cellpadding="5">
+            <thead>
+                <tr>
+                    <th>对比维度</th>
+                    <th>AssetBundle</th>
+                    <th>Resource</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="feature-name">资源分布</td>
+                    <td class="assetbundle-desc">资源可分布在多个包中</td>
+                    <td class="resource-desc">所有资源打包成一个大包</td>
+                </tr>
+                <tr>
+                    <td class="feature-name">存储位置</td>
+                    <td class="assetbundle-desc">存储位置自定义灵活</td>
+                    <td class="resource-desc">必须存放在Resources目录下</td>
+                </tr>
+                <tr>
+                    <td class="feature-name">压缩方式</td>
+                    <td class="assetbundle-desc">压缩方式灵活(LZMA,LZ4)</td>
+                    <td class="resource-desc">资源全部会压缩成二进制</td>
+                </tr>
+                <tr>
+                    <td class="feature-name">更新支持</td>
+                    <td class="assetbundle-desc">支持后期进行动态更新</td>
+                    <td class="resource-desc">打包后资源只读无法动态更改</td>
+                </tr>
+            </tbody>
+        </table>
+        <h2>优势</h2>
+        <p>
+            使用AssetBundle的主要目的是实现资源的“按需加载”和“热更新”，这对于现代游戏，尤其是手机游戏至关重要。
+            <ul>
+                <li><bold>减少初始安装包大小:</bold>游戏本体只包含核心代码和必要资源，将大量的关卡、角色、皮肤等高占用资源放在服务器上，玩家在进入特定关卡或解锁内容时才下载对应的AB包。</li>
+                <li><bold>热更新:</bold>不需要玩家重新从应用商店下载整个游戏，就可以更新游戏内容。比如修复一个BUG、推出一个新活动、增加一个新英雄，只需要将更新后的AB包放到服务器上，游戏运行时检测并下载新的AB包即可。</li>
+                <li><bold>管理不同平台的资源:</bold>可以为不同平台（如iOS和Android）打包不同的AB包，使用不同压缩格式或分辨率的纹理，从而优化性能和包体。</li>
+                <li><bold>管理内存:</bold>可以动态地加载和卸载AB包，从而精确地控制内存使用。当一个场景或资源不再需要时，可以卸载对应的AB包，释放内存</li>
+            </ul>
+        </p>
+        <h2>特性</h2>
+        <p>
+            <ul>
+                <li>AB包可以存储大部分Unity资源, 但无法直接存储C#脚本，所以代码的热更新需要使用Lua或存储编译后的DLL文件</li>
+                <li>AB包不能重复进行加载，当AB包已经加载进内存后需要卸载后才能重新加载</li>
+                <li>AB包之间存在依赖关系，加载当前AB包时需一并加载其所依赖的包</li>
+                <li>打包完成后，会自动生成一个主包，主包的manifest下会存储版本号，校验码（CRC），所有其他包的相关信息</li>
+            </ul>
+        </p>
+        <h2>压缩方式</h2>
+        <p>
+            <ul>
+                <li><bold>LZMA：</bold>压缩最小，解压慢，用一个资源要解压包下所有资源</li>
+                <li><bold>LZ4：</bold>压缩稍大，解压快，用什么解压什么，内存占用低</li>
+    
+            </ul>
+        </p>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>
