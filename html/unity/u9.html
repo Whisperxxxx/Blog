@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unity常见性能优化</title>
+    <link rel="stylesheet" href="../../css/c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="../../index.html">首页</a></li>
+                <li><a href="unity.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Unity常见性能优化</h1>
+        <h2>1. Transform</h2>
+        <p>
+            用Transform来缓存一个GameObject的引用。如需要部分GameObject的组件或功能，可用transform.gamObject反查询。
+        </p>
+        <h2>2. CompareTag</h2>
+        <p>
+            如果要用tag来比较对象，不要用gameObject.tag == ...来比较，会产生GC。可以使用gameObject.CompareTag来避免GC。
+        </p>
+        <h2>3. Animator.Set...</h2>
+        <p>
+            如频繁使用Animator的SetTrigger, SetFloat等，如animator.SetTrigger("Attack"), 在这个函数内部，"Attack"字符串会被hash成一个整数。所以可以用Animator.StringToHash来提前进行hash。如
+            <pre><code>
+private static readonly int _attack = Animator.StringToHash("Attack");
+animator.SetTrigger(_attack);
+            </code></pre>
+        </p>
+        <h2>4. Material.Set...</h2>
+        <p>
+            与Animator类似,Material也提供了一系列的设置方法用于改变Shader。如
+            <pre><code>
+private static readonly int _Hue = Shader.PropertyToID("Hue");
+mat.SetFloat(_Hue, 0.5f);
+            </code></pre>
+        </p>
+        <h2>5. Vector Math</h2>
+        <p>
+            如仅是比较向量的长度而不是精准获得，可用SqrMagnitude代替Magnitude. 如
+            <pre><code>
+if (distance < 10.0f) return;
+// 可以换成
+if (sqrDistance < 10.0f * 10.0f) return
+            </code></pre>
+            在进行向量乘法时，注意乘法的顺序，可减少向量乘法运算
+            <pre><code>
+// 耗时:73ms
+for (int i = 0; i < 1000000; i++)
+    Vector3 c = 3 * Vector3.one * 2;
+// 耗时:45ms
+for (int i = 0; i < 1000000; i++)
+    Vector3 c = 3 * 2 * Vector3.one;
+            </code></pre>
+            在进行除法时，可以改成乘法。比如/ 100 可以改成 * 0.01;
+        </p>
+        <h2>6. Debug.Log</h2>
+        <p>
+            Unity的Debug.Log是一件非常耗时的操作，可以在运行时用一行代码来禁用Log的输出:Debug.logger.logEnabled = false。不过最好还是自己封装Log输出var logHandler = Debug.unityLogger.logHandler;
+        </p>
+        <h2>7. 字符串操作</h2>
+        <p>
+            string是不可变的，所以每次进行拼接都会创建新的字符串，会产生GC。可以用StringBuilder。
+        </p>
+        <h2>8. Boxing</h2>
+        <p>
+            将值类型转为object或引用类型时会发生装箱，导致内存分配。
+        </p>
+        <h2>9. LINQ 和匿名方法</h2>
+        <p>
+            LINQ方法返回的是迭代器对象，这些对象在堆上分配。且每个LINQ操作都会创建委托实例。
+            <br>匿名方法捕获外部变量时，会创建闭包，且lamda表达式会创建新的委托实例。
+        </p>
+        <h2>10. 实例化GameObject和Component</h2>
+        <p>
+            Instantiate 和 Destroy本身会产生GC，但主要来自于引擎端，可以使用对象池复用对象。
+        </p>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>

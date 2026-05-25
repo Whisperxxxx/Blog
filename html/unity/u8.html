@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animator Override Controller</title>
+    <link rel="stylesheet" href="../../css/c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="../../index.html">首页</a></li>
+                <li><a href="unity.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Animator Override Controller</h1>
+        <h2>一、定义</h2>
+        <p>
+            假设有N个角色，他们的动画状态逻辑都相同，但是因为不同角色动作不同，需要不同的AnimationClip。可以使用AnimatorOverrideController。
+            <br>
+            <br>且AnimatorController是不支持我们在运行时修改State里的AnimatorClip的，但是利用AnimatorOverrideController的话，我们也可以实现运行时修改。原理就是新建一个AnimatorOverrideController，继承我们原本的AnimatorController，然后修改对应State的AnimatorClip，最后将这个AnimatorOverrideController关联到Animator组件上即可。
+            <br>
+            <br>但是有个问题，在做Override操作的时候，消耗的性能会随着AnimatorController里State数量的增加而增加，即使我们并不去使用它们。这个问题就是Override存在的性能热点。
+        </p>
+        <h2>二、优化</h2>
+        <p>
+            <h3>1. 减少基础状态机的复杂程度</h3>
+            <p>
+                尽量少的在基础状态机里使用复杂动画，可以在里面用尽可能多的空的AnimationClip, 然后用AOC动态加载。假如有上百个state，每次却只需要override两三个，一定不要用AOC。可以拆成多个controller。
+            </p>
+            <h3>2. 增加Constant曲线的占比</h3>
+            <p>
+                Stream Curves（流式曲线）是在动画时间范围内，数值持续变化的动画曲线。
+                <br>Constant Curves（常量曲线）在动画时间范围内，数值保持不变的动画曲线。
+                <br>Constant Curves返回固定值，不需要计算插值，几乎零开销。所以可以再导入设置中，进行动画压缩，即减小Error的值, 进行压缩，删除更多"不明显"的变化，从而提高Constant曲线的占比。
+            </p>
+            <h3>3. 使用Timeline系统</h3>
+            <p>
+                Animator设计上把整个Controller看做是一个整体，在运行时所有的操作，例如任何一次Override，任何一次修改，都是对整体数据集的修改，非常的庞大。Unity在做Timeline的时候避免了这个问题，它是基于每个Clip去修改的，因此Timeline整体的性能消耗会更平缓一些，是更加灵活更加好的选择。
+            </p>
+        </p>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>

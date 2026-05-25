@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设计模式</title>
+    <link rel="stylesheet" href="../../css/c.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="../../index.html">首页</a></li>
+                <li><a href="coreconcept.html">返回</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>设计模式</h1>
+        <p>
+            设计模式通常根据其解决的问题和使用的方法被分为三大类：创建型模式、结构型模式和行为型模式。本文每个类型介绍一个�?            <h2>创建型模式：单例模式（Singleton Pattern�?/h2>
+            <p>
+                <bold>目的</bold>
+                <br>确保一个类只有一个实例，并提供一个全局访问点来获取这个实例�?                <p>
+                    <bold>使用场景</bold>
+                    <br>当需要全局访问一个共享资源或服务，如配置服务、日志服务等�?                    <br>当需要频繁创建和销毁实例时�?                </p>
+                <p>
+                    <bold>优点</bold>
+                    <br>1. 减少内存开销�?                    <br>2. 避免资源的多重占用�?                </p>
+                <p>
+                    <bold>缺点</bold>
+                    <br>1. 没有接口，不能继承�?                    <br>2. 单例类的对象如果过于复杂可能导致模块间高度耦合�?                </p>
+                <p>
+                    <bold>1. 基本懒汉式单例模�?/bold>
+                    <br>最基本的实现方式，这种实现最大的问题就是不支持多线程。实例在首次访问 Instance 属性时创建。这可以避免在类加载时立即创建实例�?                    <pre><code>
+                        public class Singleton
+                        {
+                            // 私有静态变量，用于存储类的唯一实例
+                            private static Singleton instance;
+                        
+                            // 私有构造函数，防止外部通过new关键字直接创建类的实�?                            private Singleton() { }
+                        
+                            // 公开的静态属性，用于访问类的唯一实例
+                            public static Singleton Instance
+                            {
+                                get
+                                {
+                                    // 检查实例是否已存在，如果不存在，则创建一个新的实�?                                    if (instance == null)
+                                    {
+                                        instance = new Singleton();
+                                    }
+                                    // 返回单例实例
+                                    return instance;
+                                }
+                            }
+                        }                                    
+                    </code></pre>
+                </p>
+                <p>
+                    <bold>2. 线程安全的懒汉式单例模式</bold>
+                    <br>使用锁（lock）来同步访问�?                    <pre><code>
+                        public class Singleton
+                        {
+                            // 私有静态变量，用于存储类的唯一实例
+                            private static Singleton instance;
+                        
+                            // 私有静态只读对象，用作线程同步时的锁对�?                            private static readonly object lockObject = new object();
+                        
+                            // 私有构造函数，防止外部通过new关键字直接创建类的实�?                            private Singleton() { }
+                        
+                            // 公开的静态属性，用于获取类的唯一实例
+                            public static Singleton Instance
+                            {
+                                get
+                                {
+                                    // 锁定一个对象，确保在同一时刻只有一个线程可以执行以下代�?                                    lock (lockObject)
+                                    {
+                                        // 如果实例尚未创建（即为null），则创建实�?                                        if (instance == null)
+                                        {
+                                            instance = new Singleton();
+                                        }
+                                    }
+                                    // 返回单例实例
+                                    return instance;
+                                }
+                            }
+                        }                        
+                    </code></pre>
+                </p>
+                <p>
+                    <bold>3. 饿汉式单例模�?/bold>
+                    <br>饿汉式单例模式是在类加载的时候就立即初始化单例对象，从而保证单例的唯一性。由于类加载时机是确定的，并且由类加载器负责，这种方法本身就是线程安全的�?                    <pre><code>
+                        public class Singleton
+                        {
+                            // 在类加载时就创建了一个实�?                            private static readonly Singleton instance = new Singleton();
+                        
+                            // 私有构造函数，防止外部通过new关键字创建对象实�?                            private Singleton() { }
+                        
+                            // 提供一个公共的静态方法，返回实例
+                            public static Singleton Instance
+                            {
+                                get { return instance; }
+                            }
+                        }                               
+                    </code></pre>
+                </p>
+                <p>
+                    <bold>4. 双重检查锁定单例模式（Double Check Locking�?/bold>
+                    <br>双重检查锁定是一种用于多线程程序中延迟初始化单例实例的技术。其目的是只在单例实例未被创建时同步，这样就既保证了线程安全，又减少了同步的开销�?                    <pre><code>
+                        public class Singleton
+                        {
+                            private static Singleton instance;
+                            private static readonly object lockObject = new object();
+                        
+                            private Singleton() { }
+                        
+                            public static Singleton Instance
+                            {
+                                get
+                                {
+                                    if (instance == null) // 第一次检�?                                    {
+                                        lock (lockObject) // 加锁
+                                        {
+                                            if (instance == null) // 第二次检�?                                            {
+                                                instance = new Singleton();
+                                            }
+                                        }
+                                    }
+                                    return instance;
+                                }
+                            }
+                        }                                          
+                    </code></pre>
+                </p>
+                <p>
+                    <bold>5. Unity单例模式</bold>
+                    <br>承自 MonoBehaviour 
+                    <pre><code>
+                        public class GameManager : MonoBehaviour
+                        {
+                            public static GameManager Instance { get; private set; }
+                        
+                            private void Awake()
+                            {
+                                if (Instance == null)
+                                {
+                                    Instance = this;
+                                    DontDestroyOnLoad(gameObject); // 确保对象跨场景不被销�?                                }
+                                else if (Instance != this)
+                                {
+                                    Destroy(gameObject); // 销毁在新场景中额外创建的实�?                                }
+                            }
+                        }                             
+                    </code></pre>
+                </p>
+            </p>
+            <h2>行为型模式：观察者模式（Observer Pattern�?/h2>
+            <p>
+                <bold>目的</bold>
+                <br>定义对象间的一种一对多的依赖关系，使得每当一个对象改变状态，则所有依赖于它的对象都会得到通知并被自动更新�?                <p>
+                    <bold>使用场景</bold>
+                    <br>当一个对象的状态变化需要同时更新其他对象时
+                </p>
+                <p>
+                    <bold>优点</bold>
+                    <br>1. 解�? 观察者与主题之间的耦合度低
+                    <br>2. 建立了一套状态改变时的触发和通知机制�?                </p>
+                <p>
+                    <bold>缺点</bold>
+                    <br>1. 性能问题：如果观察者众多，通知过程可能耗时�?                    <br>2. 缺乏变化详情：观察者不知道主题如何变化，只知道变化发生�?                </p>
+                <p>
+                    <bold>观察者模式实�?/bold>
+                    <br>定义观察者接口，它规定了所有观察者必须实现的 Update 方法
+                    <pre><code>
+                        public interface IObserver
+                        {
+                            void Update(string message);
+                        }                             
+                    </code></pre>
+                    <br>定义主题接口，它包含注册和移除观察者的方法，以及通知所有观察者的方法
+                    <pre><code>
+                        public interface ISubject
+                        {
+                            void Attach(IObserver observer);
+                            void Detach(IObserver observer);
+                            void Notify();
+                        }                                                  
+                    </code></pre>   
+                    <br>实现具体主题，具体主题实现了主题接口
+                    <pre><code>
+                        public class ConcreteSubject : ISubject
+                        {
+                            private List<IObserver> _observers = new List<IObserver>();
+                            private string _state;
+                        
+                            public void Attach(IObserver observer)
+                            {
+                                _observers.Add(observer);
+                            }
+                        
+                            public void Detach(IObserver observer)
+                            {
+                                _observers.Remove(observer);
+                            }
+                        
+                            public void Notify()
+                            {
+                                foreach (IObserver observer in _observers)
+                                {
+                                    observer.Update(_state);
+                                }
+                            }
+                        
+                            public void SetState(string state)
+                            {
+                                _state = state;
+                                Notify();
+                            }
+                        }                                                                       
+                    </code></pre>  
+                    <br>实现具体观察�? 定义了在接收到状态更新通知时的具体行为
+                    <pre><code>
+                        public class ConcreteObserver : IObserver
+                        {
+                            private string _name;
+                        
+                            public ConcreteObserver(string name)
+                            {
+                                _name = name;
+                            }
+                        
+                            public void Update(string message)
+                            {
+                                Console.WriteLine($"{_name} received update: {message}");
+                            }
+                        }
+                    </code></pre>   
+                    <br>使用观察者模�?                    <pre><code>
+                        class Program
+                        {
+                            static void Main(string[] args)
+                            {
+                                ConcreteSubject subject = new ConcreteSubject();
+                        
+                                IObserver observer1 = new ConcreteObserver("Observer 1");
+                                IObserver observer2 = new ConcreteObserver("Observer 2");
+                                IObserver observer3 = new ConcreteObserver("Observer 3");
+                        
+                                subject.Attach(observer1);
+                                subject.Attach(observer2);
+                                subject.Attach(observer3);
+                        
+                                subject.SetState("New State 1"); // 所有观察者会收到更新
+                                subject.Detach(observer2);
+                                subject.SetState("New State 2"); // 只有Observer 1 �?3 会收到更�?                            }
+                        }                        
+                    </code></pre>   
+                </p>
+    
+            </p>
+        </p>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>
